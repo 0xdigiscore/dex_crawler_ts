@@ -135,7 +135,7 @@ model SmartWallet {
   realized_profit           Decimal?
   buy                       Int      @default(0)
   sell                      Int      @default(0)
-  last_active               BigInt?
+  last_active               Decimal?
   realized_profit_1d        Decimal?
   realized_profit_7d        Decimal?
   realized_profit_30d       Decimal?
@@ -159,7 +159,7 @@ model SmartWallet {
   followers_count           Int      @default(0)
   is_blue_verified          Boolean  @default(false)
   twitter_description       String?
-  avg_hold_time             BigInt?
+  avg_hold_time             Decimal?
   winrate_7d                Decimal?
   avg_cost_7d               Decimal?
   pnl_lt_minus_dot5_num_7d  Int      @default(0)

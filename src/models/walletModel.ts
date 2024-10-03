@@ -18,7 +18,7 @@ export async function parseAndSaveWallets(
           realized_profit: wallet.realized_profit,
           buy: wallet.buy,
           sell: wallet.sell,
-          last_active: wallet.last_active ? BigInt(wallet.last_active) : null,
+          last_active: wallet.last_active,
           realized_profit_1d: wallet.realized_profit_1d,
           realized_profit_7d: wallet.realized_profit_7d,
           realized_profit_30d: wallet.realized_profit_30d,
@@ -45,9 +45,7 @@ export async function parseAndSaveWallets(
               ? wallet.is_blue_verified
               : wallet.is_blue_verified === 1,
           twitter_description: wallet.twitter_description,
-          avg_hold_time: wallet.avg_hold_time
-            ? BigInt(wallet.avg_hold_time)
-            : null,
+          avg_hold_time: wallet.avg_hold_time,
           winrate_7d: wallet.winrate_7d,
           avg_cost_7d: wallet.avg_cost_7d,
           pnl_lt_minus_dot5_num_7d: wallet.pnl_lt_minus_dot5_num_7d,
