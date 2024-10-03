@@ -130,7 +130,8 @@ model TopTrader {
 
 model SmartWallet {
   id                        Int      @id @default(autoincrement())
-  wallet_address            String   @db.VarChar(255)
+  wallet_address            String   @unique @db.VarChar(255)
+  chain                     String   @db.VarChar(255)
   realized_profit           Decimal?
   buy                       Int      @default(0)
   sell                      Int      @default(0)
@@ -153,6 +154,7 @@ model SmartWallet {
   ens                       String?  @db.VarChar(255)
   tag_rank                  Json?
   tags                      String[]
+  recent_buy_tokens         Json?    // Add this line
   maker_avatar_color        String?  @db.VarChar(255)
   twitter_name              String?  @db.VarChar(255)
   followers_count           Int      @default(0)
@@ -172,4 +174,5 @@ model SmartWallet {
   updated_at                DateTime @updatedAt
 
   @@index([wallet_address])
+  @@unique([chain, wallet_address], name: "smartWalletChainWalletAddressUnique")
 }

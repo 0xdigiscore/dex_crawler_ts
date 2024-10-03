@@ -1,6 +1,8 @@
 import { CrawlingContext } from "crawlee";
 import { Response } from "playwright";
 import { parseAndSaveTokens } from "../models/tokenModel.js";
+import { getDatasetName } from "@/const/crawlerUrls.js";
+import { storeData } from "@/utils/storedata.js";
 
 export async function rankEthTokens({
   request,
@@ -12,6 +14,8 @@ export async function rankEthTokens({
   if (response && (response as Response).ok()) {
     const jsonResponse = await (response as Response).json();
     log.info(`Response received successfully`);
+
+    const datasetName = getDatasetName(request.url);
 
     // Call parseAndSaveTokens function
     await parseAndSaveTokens(jsonResponse);
@@ -25,6 +29,7 @@ export async function rankEthTokens({
 
       await enqueueLinks({ urls: [newUrl], label: "top/token/traders" });
     }
+    await storeData(request.url, jsonResponse, datasetName, log);
   } else {
     log.error(`Failed to fetch data from ${request.url}`);
   }

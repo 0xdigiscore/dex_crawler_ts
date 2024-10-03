@@ -157,8 +157,8 @@ function extractTokenInfoFromRequest(url: string): {
 
   // Adjust indices based on your actual URL structure
   const len = pathnameParts.length;
-  const chain = pathnameParts[len - 3];
-  const tokenAddress = pathnameParts[len - 2];
+  const chain = pathnameParts[len - 2];
+  const tokenAddress = pathnameParts[len - 1];
 
   return { chain, tokenAddress };
 }
