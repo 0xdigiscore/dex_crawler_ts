@@ -1,0 +1,37 @@
+{
+  "name": "gmgn-crawler-typescript",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "This is an example of a Crawlee project.",
+  "dependencies": {
+    "@crawlee/browser-pool": "^3.11.4",
+    "@prisma/client": "^5.20.0",
+    "crawlee": "^3.0.0",
+    "dotenv": "^16.4.5",
+    "pg": "^8.13.0",
+    "playwright": "*",
+    "playwright-extra": "^4.3.6",
+    "puppeteer": "^23.4.1",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@apify/tsconfig": "^0.1.0",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.10",
+    "prisma": "^5.20.0",
+    "tsx": "^4.4.0",
+    "typescript": "~5.6.0"
+  },
+  "scripts": {
+    "start": "npm run start:dev",
+    "test-firefox": "DEBUG=pw:browser node test-firefox.js",
+    "start:prod": "node dist/main.js",
+    "start:dev": "tsx src/main.ts",
+    "build": "tsc",
+    "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
+    "postinstall": "npx crawlee install-playwright-browsers"
+  },
+  "author": "It's not you it's me",
+  "license": "ISC"
+}
