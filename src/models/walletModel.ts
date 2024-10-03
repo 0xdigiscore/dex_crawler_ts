@@ -5,9 +5,8 @@ export async function parseAndSaveWallets(
   chain: string,
   log: any
 ) {
-  for (const walletData of walletsData) {
+  for (const wallet of walletsData) {
     try {
-      const wallet = walletData.data;
       await prisma.smartWallet.upsert({
         where: {
           smartWalletChainWalletAddressUnique: {
@@ -103,8 +102,9 @@ export async function parseAndSaveWallets(
 
       log.info(`Successfully processed wallet: ${wallet.wallet_address}`);
     } catch (error) {
+      console.log(`error parsing wallet: ${JSON.stringify(wallet)}`);
       log.error(
-        `Error processing wallet: ${walletData.wallet_address}`,
+        `Error processing wallet: ${wallet.wallet_address}`,
         error ?? "Unknown error"
       );
     }
