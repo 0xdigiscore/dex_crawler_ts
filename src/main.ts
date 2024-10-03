@@ -20,8 +20,8 @@ const crawler = new PlaywrightCrawler({
   },
   maxRequestsPerCrawl: 500,
   maxRequestRetries: 10,
-  maxRequestsPerMinute: 20,
-  maxConcurrency: 1,
+  maxRequestsPerMinute: 100,
+  maxConcurrency: 2,
   browserPoolOptions: {
     useFingerprints: true,
   },
