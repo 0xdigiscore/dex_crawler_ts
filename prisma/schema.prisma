@@ -154,7 +154,6 @@ model SmartWallet {
   ens                       String?  @db.VarChar(255)
   tag_rank                  Json?
   tags                      String[]
-  recent_buy_tokens         Json?    // Add this line
   maker_avatar_color        String?  @db.VarChar(255)
   twitter_name              String?  @db.VarChar(255)
   followers_count           Int      @default(0)
@@ -169,6 +168,7 @@ model SmartWallet {
   pnl_2x_5x_num_7d          Int      @default(0)
   pnl_gt_5x_num_7d          Int      @default(0)
   daily_profit_7d           Json?
+  recent_buy_tokens         Json?
   txs                       Int      @default(0)
   created_at                DateTime @default(now())
   updated_at                DateTime @updatedAt

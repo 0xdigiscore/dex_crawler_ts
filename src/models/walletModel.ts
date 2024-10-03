@@ -40,7 +40,10 @@ export async function parseAndSaveWallets(
           maker_avatar_color: wallet.maker_avatar_color,
           twitter_name: wallet.twitter_name,
           followers_count: wallet.followers_count,
-          is_blue_verified: wallet.is_blue_verified,
+          is_blue_verified:
+            typeof wallet.is_blue_verified === "boolean"
+              ? wallet.is_blue_verified
+              : wallet.is_blue_verified === 1,
           twitter_description: wallet.twitter_description,
           avg_hold_time: wallet.avg_hold_time
             ? BigInt(wallet.avg_hold_time)
@@ -83,7 +86,10 @@ export async function parseAndSaveWallets(
           maker_avatar_color: wallet.maker_avatar_color,
           twitter_name: wallet.twitter_name,
           followers_count: wallet.followers_count,
-          is_blue_verified: wallet.is_blue_verified,
+          is_blue_verified:
+            typeof wallet.is_blue_verified === "boolean"
+              ? wallet.is_blue_verified
+              : wallet.is_blue_verified === 1,
           twitter_description: wallet.twitter_description,
           avg_hold_time: wallet.avg_hold_time
             ? BigInt(wallet.avg_hold_time)
@@ -103,6 +109,7 @@ export async function parseAndSaveWallets(
       log.info(`Successfully processed wallet: ${wallet.wallet_address}`);
     } catch (error) {
       console.log(`error parsing wallet: ${JSON.stringify(wallet)}`);
+      console.log(`error: ${error}`);
       log.error(
         `Error processing wallet: ${wallet.wallet_address}`,
         error ?? "Unknown error"
