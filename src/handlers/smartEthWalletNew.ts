@@ -1,63 +1,6 @@
 import { CrawlingContext } from "crawlee";
 import { Response } from "playwright";
-import { parseAndSaveWallets } from "@/models/walletModel.js";
-
-// Define interfaces for the API response
-interface ApiResponse {
-  code: number;
-  msg: string;
-  data: WalletData;
-}
-
-interface WalletData {
-  twitter_bind: boolean;
-  twitter_fans_num: number;
-  twitter_username: string | null;
-  twitter_name: string | null;
-  ens: string | null;
-  avatar: string | null;
-  name: string | null;
-  eth_balance: string;
-  sol_balance: string;
-  trx_balance: string;
-  balance: string;
-  total_value: number;
-  unrealized_profit: number;
-  unrealized_pnl: number;
-  realized_profit: number;
-  pnl: number;
-  pnl_7d: number;
-  pnl_30d: number;
-  realized_profit_7d: number;
-  realized_profit_30d: number;
-  winrate: number;
-  all_pnl: number;
-  total_profit: number;
-  total_profit_pnl: number;
-  buy_30d: number;
-  sell_30d: number;
-  buy_7d: number;
-  sell_7d: number;
-  buy: number;
-  sell: number;
-  history_bought_cost: number;
-  token_avg_cost: number;
-  token_sold_avg_profit: number;
-  token_num: number;
-  profit_num: number;
-  pnl_lt_minus_dot5_num: number;
-  pnl_minus_dot5_0x_num: number;
-  pnl_lt_2x_num: number;
-  pnl_2x_5x_num: number;
-  pnl_gt_5x_num: number;
-  last_active_timestamp: number;
-  tags: string[];
-  tag_rank: Record<string, number>;
-  followers_count: number;
-  is_contract: boolean;
-  updated_at: number;
-  refresh_requested_at: number | null;
-}
+import { parseAndSaveWallets, WalletData } from "@/models/walletModel.js";
 
 export async function smartEthWalletNew({
   request,
@@ -66,19 +9,67 @@ export async function smartEthWalletNew({
 }: CrawlingContext) {
   log.info(`Processing ETH Smart Wallets: ${request.url}`);
   if (response && (response as Response).ok()) {
-    const jsonResponse: ApiResponse = await (response as Response).json();
+    const jsonResponse = await (response as Response).json();
     const { data } = jsonResponse;
+    // Convert API response to WalletData format
+    const walletData: WalletData = {
+      wallet_address: data.address,
+      realized_profit: data.realized_profit,
+      buy: data.buy,
+      sell: data.sell,
+      last_active: data.last_active_timestamp,
+      realized_profit_1d: 0, // Not provided in API response
+      realized_profit_7d: data.realized_profit_7d,
+      realized_profit_30d: data.realized_profit_30d,
+      pnl_30d: data.pnl_30d,
+      pnl_7d: data.pnl_7d,
+      pnl_1d: 0, // Not provided in API response
+      txs_30d: 0, // Not provided in API response
+      buy_30d: data.buy_30d,
+      sell_30d: data.sell_30d,
+      balance: parseFloat(data.balance),
+      eth_balance: parseFloat(data.eth_balance),
+      sol_balance: parseFloat(data.sol_balance),
+      trx_balance: parseFloat(data.trx_balance),
+      twitter_username: data.twitter_username,
+      avatar: data.avatar,
+      ens: data.ens,
+      tag: null, // Not provided in API response
+      tag_rank: data.tag_rank,
+      nickname: null, // Not provided in API response
+      tags: data.tags,
+      maker_avatar_color: null, // Not provided in API response
+      twitter_name: data.twitter_name,
+      followers_count: data.followers_count,
+      is_blue_verified: false, // Not provided in API response
+      twitter_description: null, // Not provided in API response
+      name: data.name,
+      avg_hold_time: 0, // Not provided in API response
+      recent_buy_tokens: [], // Not provided in API response
+      winrate_7d: data.winrate,
+      avg_cost_7d: data.token_avg_cost,
+      pnl_lt_minus_dot5_num_7d: data.pnl_lt_minus_dot5_num ?? 0,
+      pnl_minus_dot5_0x_num_7d: data.pnl_minus_dot5_0x_num ?? 0,
+      pnl_lt_2x_num_7d: data.pnl_lt_2x_num ?? 0,
+      pnl_2x_5x_num_7d: data.pnl_2x_5x_num ?? 0,
+      pnl_gt_5x_num_7d: data.pnl_gt_5x_num ?? 0,
+      daily_profit_7d: [], // Not provided in API response
+      txs: 0, // Not provided in API response
+    };
 
     // Filter out wallets with unwanted tags
     const unwantedTags = ["sandwich_bot", "scammer", "snipe_bot"];
-    if (data.tags && data.tags.some((tag) => unwantedTags.includes(tag))) {
+    if (
+      walletData &&
+      walletData.tags.some((tag) => unwantedTags.includes(tag))
+    ) {
       log.info(`Skipping wallet with unwanted tags: ${data.tags.join(", ")}`);
       return;
     }
 
     console.log(`smart new wallets request url: ${request.url}`);
 
-    await parseAndSaveWallets([data], "eth", "1step", log, request.url);
+    await parseAndSaveWallets([walletData], "eth", "1step", log, request.url);
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
   }

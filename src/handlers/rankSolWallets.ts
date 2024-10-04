@@ -20,7 +20,7 @@ export async function rankSolWallets({
     const walletsData = Array.isArray(data.rank) ? data.rank : [data.rank];
     // Store data for each address
     const datasetName = getDatasetName(request.url);
-    await storeData(request.url, data, datasetName, log);
+    // await storeData(request.url, data, datasetName, log);
 
     await parseAndSaveWallets(walletsData, "sol", "gmgn", log);
   } else {

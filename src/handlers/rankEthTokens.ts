@@ -29,7 +29,7 @@ export async function rankEthTokens({
 
       await enqueueLinks({ urls: [newUrl], label: "top/token/traders" });
     }
-    await storeData(request.url, jsonResponse, datasetName, log);
+    // await storeData(request.url, jsonResponse, datasetName, log);
   } else {
     log.error(`Failed to fetch data from ${request.url}`);
   }

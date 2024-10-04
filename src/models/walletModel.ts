@@ -1,15 +1,61 @@
-import prisma from "@/database/prisma.js"; // 确保正确导入 Prisma 客户端
+import prisma from "@/database/prisma.js";
+
+export interface WalletData {
+  wallet_address?: string;
+  address?: string;
+  realized_profit: number;
+  buy: number;
+  sell: number;
+  last_active: number;
+  realized_profit_1d: number;
+  realized_profit_7d: number;
+  realized_profit_30d: number;
+  pnl_30d: number;
+  pnl_7d: number;
+  pnl_1d: number;
+  txs_30d: number;
+  buy_30d: number;
+  sell_30d: number;
+  balance: number;
+  eth_balance: number;
+  sol_balance: number;
+  trx_balance: number;
+  twitter_username: string | null;
+  avatar: string | null;
+  ens: string | null;
+  tag: string | null;
+  tag_rank: Record<string, number>;
+  nickname: string | null;
+  tags: string[];
+  maker_avatar_color: string | null;
+  twitter_name: string | null;
+  followers_count: number;
+  is_blue_verified: boolean | number;
+  twitter_description: string | null;
+  name: string | null;
+  avg_hold_time: number;
+  recent_buy_tokens: any[];
+  winrate_7d: number;
+  avg_cost_7d: number;
+  pnl_lt_minus_dot5_num_7d: number;
+  pnl_minus_dot5_0x_num_7d: number;
+  pnl_lt_2x_num_7d: number;
+  pnl_2x_5x_num_7d: number;
+  pnl_gt_5x_num_7d: number;
+  daily_profit_7d: Array<{ timestamp: number; profit: number }>;
+  txs: number;
+}
 
 export async function parseAndSaveWallets(
-  walletsData: any[],
+  walletsData: WalletData[],
   chain: string,
   source: string,
   log: any,
-  request_url?: any
+  request_url?: string
 ) {
   for (const wallet of walletsData) {
-    let wallet_address = "";
-    if (!wallet.wallet_address && request_url) {
+    let wallet_address = wallet.wallet_address || wallet.address || "";
+    if (!wallet_address && request_url) {
       wallet_address = extractWalletAddressFromUrl(request_url);
     }
     log.info(`wallet_address: ${wallet_address} request_url: ${request_url}`);
@@ -22,14 +68,13 @@ export async function parseAndSaveWallets(
       await prisma.smartWallet.upsert({
         where: {
           smartWalletChainWalletAddressUnique: {
-            chain: chain,
-            wallet_address: wallet_address,
+            chain,
+            wallet_address,
           },
         },
         update: {
           realized_profit: wallet.realized_profit,
-          //@ts-ignore
-          source: source,
+          source,
           buy: wallet.buy,
           sell: wallet.sell,
           last_active: wallet.last_active,
@@ -71,10 +116,9 @@ export async function parseAndSaveWallets(
           txs: wallet.txs,
         },
         create: {
-          chain: chain,
-          //@ts-ignore
-          source: source,
-          wallet_address: wallet_address,
+          chain,
+          source,
+          wallet_address,
           realized_profit: wallet.realized_profit,
           buy: wallet.buy,
           sell: wallet.sell,

@@ -6,8 +6,8 @@ module.exports = {
       args: "run start:gmgn",
       cron_restart: "*/5 * * * *",
       autorestart: true,
-      restart_delay: 300000, // 5分钟 = 5 * 60 * 1000 毫秒
-      max_restarts: 1,
+      restart_delay: 3000, // 5分钟 = 5 * 60 * 1000 毫秒
+      max_restarts: 5,
     },
     {
       name: "1step-crawler",
@@ -16,7 +16,7 @@ module.exports = {
       cron_restart: "*/15 * * * *",
       autorestart: true,
       restart_delay: 600000, // 10分钟 = 5 * 60 * 1000 毫秒
-      max_restarts: 1,
+      max_restarts: 5,
     },
   ],
 };

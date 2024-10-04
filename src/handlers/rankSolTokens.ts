@@ -16,7 +16,7 @@ export async function rankSolTokens({
     console.log(`rank sol wallets request url: ${request.url}`);
 
     const datasetName = getDatasetName(request.url);
-    await storeData(request.url, data, datasetName, log);
+    //await storeData(request.url, data, datasetName, log);
 
     await parseAndSaveTokens(jsonResponse);
     const addresses =
