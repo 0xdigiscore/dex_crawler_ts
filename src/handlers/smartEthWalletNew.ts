@@ -7,12 +7,12 @@ export async function smartEthWalletNew({
   log,
   response,
 }: CrawlingContext) {
-  log.info(`Processing ETH Smart Wallets: ${request.url}`);
   if (response && (response as Response).ok()) {
     const jsonResponse = await (response as Response).json();
     const { data } = jsonResponse;
+
     // Convert API response to WalletData format
-    const walletData: WalletData = {
+    let walletData: WalletData = {
       wallet_address: data.address,
       realized_profit: data.realized_profit,
       buy: data.buy,
@@ -56,6 +56,7 @@ export async function smartEthWalletNew({
       daily_profit_7d: [], // Not provided in API response
       txs: 0, // Not provided in API response
     };
+    log.warning(`walletData.tag: ${JSON.stringify(walletData.tags)}`);
 
     // Filter out wallets with unwanted tags
     const unwantedTags = ["sandwich_bot", "scammer", "snipe_bot"];
@@ -66,8 +67,6 @@ export async function smartEthWalletNew({
       log.info(`Skipping wallet with unwanted tags: ${data.tags.join(", ")}`);
       return;
     }
-
-    console.log(`smart new wallets request url: ${request.url}`);
 
     await parseAndSaveWallets([walletData], "eth", "1step", log, request.url);
   } else {

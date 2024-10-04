@@ -5,7 +5,7 @@ module.exports = {
       script: "npm",
       args: "run start:gmgn",
       cron_restart: "*/10 * * * *",
-      autorestart: true,
+      autorestart: false,
       restart_delay: 3000,
       max_restarts: 0,
     },

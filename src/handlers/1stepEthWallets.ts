@@ -18,8 +18,7 @@ export async function oneStepEthWallets({
       log.info("No addresses found in jsonResponse.data.data.rank");
     }
 
-    console.log(addresses);
-    addresses = addresses.slice(0, 450);
+    addresses = addresses.slice(0, 600);
     for (const address of addresses) {
       const newUrl = `https://gmgn.ai/defi/quotation/v1/smartmoney/eth/walletNew/${address}?period=7d`;
 
