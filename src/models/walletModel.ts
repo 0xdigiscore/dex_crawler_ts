@@ -63,7 +63,7 @@ export async function parseAndSaveWallets(
       console.log(`wallet_address is empty`);
       continue;
     }
-    const unwantedTags = ["sandwich_bot", "scammer", "snipe_bot"];
+    const unwantedTags = ["sandwich_bot", "scammer"];
     if (wallet && wallet.tags.some((tag) => unwantedTags.includes(tag))) {
       log.info(`Skipping wallet with unwanted tags: ${wallet.tags.join(", ")}`);
       return;
