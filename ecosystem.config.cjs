@@ -6,7 +6,8 @@ module.exports = {
       args: "run start:gmgn",
       cron_restart: "*/10 * * * *",
       autorestart: false,
-      restart_delay: 3000,
+      restart_delay: 6000,
+      exp_backoff_restart_delay: 100,
       max_restarts: 0,
     },
     // {
