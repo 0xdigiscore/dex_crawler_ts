@@ -28,6 +28,7 @@
     "test-firefox": "DEBUG=pw:browser node test-firefox.js",
     "start:prod": "node dist/main.js",
     "start:dev": "tsx src/main.ts",
+    "start:pm2": "pm2 start npm --name 'gmgn-crawler' -- run start",
     "build": "tsc",
     "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
     "postinstall": "npx crawlee install-playwright-browsers"
