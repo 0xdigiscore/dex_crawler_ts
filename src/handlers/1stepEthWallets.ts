@@ -12,7 +12,6 @@ export async function oneStepEthWallets({
     const jsonResponse = await (response as Response).json();
     const { data } = jsonResponse;
     console.log(`1step eth wallets request url: ${request.url}`);
-    console.log(data);
 
     let addresses = data?.map((item: any) => item.address) || [];
     if (addresses.length === 0) {
