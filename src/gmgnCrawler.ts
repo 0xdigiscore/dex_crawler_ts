@@ -1,7 +1,7 @@
 import { PlaywrightCrawler, ProxyConfiguration } from "crawlee";
 import { router } from "@/routes.js";
 import { firefox } from "playwright";
-import { startUrls } from "./const/crawlerUrls.js";
+import { crawlerGmgnUrlConfigs } from "./const/crawlerUrls.js";
 
 const proxyConfiguration = new ProxyConfiguration({
   proxyUrls: [process.env.PROXY_URL as string],
@@ -18,13 +18,13 @@ const crawler = new PlaywrightCrawler({
     // default Chromium browser will be used.
     launcher: firefox,
   },
-  maxRequestsPerCrawl: 500,
+  maxRequestsPerCrawl: 2000,
   maxRequestRetries: 10,
-  maxRequestsPerMinute: 100,
+  maxRequestsPerMinute: 80,
   maxConcurrency: 2,
   browserPoolOptions: {
     useFingerprints: true,
   },
 });
 
-await crawler.run(startUrls);
+await crawler.run(crawlerGmgnUrlConfigs);

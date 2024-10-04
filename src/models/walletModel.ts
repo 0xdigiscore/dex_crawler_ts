@@ -3,19 +3,33 @@ import prisma from "@/database/prisma.js"; // 确保正确导入 Prisma 客户�
 export async function parseAndSaveWallets(
   walletsData: any[],
   chain: string,
-  log: any
+  source: string,
+  log: any,
+  request_url?: any
 ) {
   for (const wallet of walletsData) {
+    let wallet_address = "";
+    if (!wallet.wallet_address && request_url) {
+      wallet_address = extractWalletAddressFromUrl(request_url);
+    }
+    log.info(`wallet_address: ${wallet_address} request_url: ${request_url}`);
+    if (!wallet_address) {
+      console.log(`wallet_address is empty`);
+      continue;
+    }
+
     try {
       await prisma.smartWallet.upsert({
         where: {
           smartWalletChainWalletAddressUnique: {
             chain: chain,
-            wallet_address: wallet.wallet_address,
+            wallet_address: wallet_address,
           },
         },
         update: {
           realized_profit: wallet.realized_profit,
+          //@ts-ignore
+          source: source,
           buy: wallet.buy,
           sell: wallet.sell,
           last_active: wallet.last_active,
@@ -58,7 +72,9 @@ export async function parseAndSaveWallets(
         },
         create: {
           chain: chain,
-          wallet_address: wallet.wallet_address,
+          //@ts-ignore
+          source: source,
+          wallet_address: wallet_address,
           realized_profit: wallet.realized_profit,
           buy: wallet.buy,
           sell: wallet.sell,
@@ -102,14 +118,19 @@ export async function parseAndSaveWallets(
         },
       });
 
-      log.info(`Successfully processed wallet: ${wallet.wallet_address}`);
+      log.info(`Successfully processed wallet: ${wallet_address}`);
     } catch (error) {
       console.log(`error parsing wallet: ${JSON.stringify(wallet)}`);
       console.log(`error: ${error}`);
       log.error(
-        `Error processing wallet: ${wallet.wallet_address}`,
+        `Error processing wallet: ${wallet_address}`,
         error ?? "Unknown error"
       );
     }
   }
+}
+
+function extractWalletAddressFromUrl(url: string): string {
+  const match = url.match(/\/walletNew\/([^?]+)/);
+  return match ? match[1] : "";
 }

@@ -130,6 +130,7 @@ model TopTrader {
 
 model SmartWallet {
   id                        Int      @id @default(autoincrement())
+  source                    String?   @db.VarChar(255)
   wallet_address            String   @unique @db.VarChar(255)
   chain                     String   @db.VarChar(255)
   realized_profit           Decimal?

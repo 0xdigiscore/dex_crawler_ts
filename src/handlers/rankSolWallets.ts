@@ -22,7 +22,7 @@ export async function rankSolWallets({
     const datasetName = getDatasetName(request.url);
     await storeData(request.url, data, datasetName, log);
 
-    await parseAndSaveWallets(walletsData, "sol", log);
+    await parseAndSaveWallets(walletsData, "sol", "gmgn", log);
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
   }

@@ -20,7 +20,7 @@ export async function rankEthWallets({
     const datasetName = getDatasetName(request.url);
     await storeData(request.url, data, datasetName, log);
 
-    await parseAndSaveWallets(walletsData, "eth", log);
+    await parseAndSaveWallets(walletsData, "eth", "gmgn", log);
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
   }
