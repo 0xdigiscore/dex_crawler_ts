@@ -7,7 +7,7 @@ module.exports = {
       cron_restart: "*/10 * * * *",
       autorestart: true,
       restart_delay: 3000,
-      max_restarts: 5,
+      max_restarts: 0,
     },
     // {
     //   name: "1step-crawler",
