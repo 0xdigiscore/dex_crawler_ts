@@ -21,8 +21,6 @@ export async function rankEthWallets({
 
     // 假设 data.rank 是钱包数据的数组
     const walletsData = Array.isArray(data.rank) ? data.rank : [data.rank];
-    const datasetName = getDatasetName(request.url);
-    //await storeData(request.url, data, datasetName, log);
 
     for (const wallet of walletsData) {
       const walletAddress = wallet.wallet_address || wallet.address || "";

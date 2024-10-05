@@ -1,32 +1,26 @@
 import { CrawlingContext } from "crawlee";
 import { Response } from "playwright";
-import { parseAndSaveTokens } from "@/models/tokenModel.js";
-import { getDatasetName } from "@/const/crawlerUrls.js";
-import { storeData } from "@/utils/storedata.js";
+import { parseAndSaveHotTokens } from "@/models/tokenModel.js";
 
 export async function rankSolTokens({
   request,
   log,
   response,
+  enqueueLinks,
 }: CrawlingContext) {
   log.info(`Processing SOL Smart Wallets: ${request.url}`);
   if (response && (response as Response).ok()) {
     const jsonResponse = await (response as Response).json();
-    const { data } = jsonResponse;
     console.log(`rank sol wallets request url: ${request.url}`);
 
-    const datasetName = getDatasetName(request.url);
-    //await storeData(request.url, data, datasetName, log);
-
-    await parseAndSaveTokens(jsonResponse);
+    await parseAndSaveHotTokens(jsonResponse.data.rank);
     const addresses =
       jsonResponse?.data?.rank?.map((item: any) => item.address) || [];
     if (addresses.length === 0) {
       log.info("No addresses found in jsonResponse.data.data.rank");
     }
     // for (const address of addresses) {
-    //   const newUrl = `https://gmgn.ai/defi/quotation/v1/tokens/top_traders/eth/${address}?orderby=realized_profit&direction=desc&tag=smart_degen`;
-
+    //    const newUrl = `https://gmgn.ai/defi/quotation/v1/trades/sol/${address}?limit=100&maker=&tag[]=smart_degen&tag[]=pump_smart`;
     //   await enqueueLinks({ urls: [newUrl], label: "top/token/traders" });
     // }
   } else {

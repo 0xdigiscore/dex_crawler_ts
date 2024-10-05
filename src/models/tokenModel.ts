@@ -42,9 +42,8 @@ interface HotTokenData extends TokenData {
   cto_flag: number;
 }
 
-async function parseAndSaveTokens(response: any) {
+async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
   try {
-    const tokens: HotTokenData[] = response.data.rank;
     const now = new Date(new Date().toUTCString());
     const hourTimestamp = new Date(
       Date.UTC(
@@ -55,7 +54,7 @@ async function parseAndSaveTokens(response: any) {
       )
     );
 
-    for (const token of tokens) {
+    for (const token of hotTokens) {
       await prisma.$transaction(async (tx) => {
         // 1. Upsert the Token first to satisfy the foreign key constraint
         await tx.token.upsert({
@@ -182,4 +181,4 @@ async function parseAndSaveTokens(response: any) {
   }
 }
 
-export { parseAndSaveTokens, TokenData, HotTokenData };
+export { parseAndSaveHotTokens, TokenData, HotTokenData };
