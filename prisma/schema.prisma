@@ -8,25 +8,25 @@ datasource db {
 }
 
 model Token {
-  id                      Int         @id @default(autoincrement())
-  chain                   String      @db.VarChar(255)
-  token_address           String      @db.VarChar(255)
-  symbol                  String?     @db.VarChar(255)
-  name                    String?     @db.VarChar(255)
+  id                      Int      @id @default(autoincrement())
+  chain                   String   @db.VarChar(255)
+  token_address           String   @db.VarChar(255)
+  symbol                  String?  @db.VarChar(255)
+  name                    String?  @db.VarChar(255)
   logo                    String?
   decimals                Int?
   total_supply            Decimal?
   website                 String?
   telegram                String?
-  twitter_username        String?     @db.VarChar(255)
+  twitter_username        String?  @db.VarChar(255)
   is_open_source          Boolean?
   renounced               Boolean?
   pool_creation_timestamp BigInt?
   is_honeypot             Boolean?
   buy_tax                 Decimal?
   sell_tax                Decimal?
-  created_at              DateTime    @default(now())
-  updated_at              DateTime    @updatedAt
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
 
   market_cap              Float?
   fully_diluted_valuation Float?
@@ -37,7 +37,7 @@ model Token {
   can_mint                Boolean?
   has_renounced_ownership Boolean?
   top_pools               String?
-  description             String?     @db.Text
+  description             String?   @db.Text
   price_change_1h         Float?
   price_change_24h        Float?
   transactions_1h_buys    Int?
@@ -45,7 +45,8 @@ model Token {
   transactions_24h_buys   Int?
   transactions_24h_sells  Int?
 
-  top_traders             TopTrader[]
+  top_traders TopTrader[]
+  hot_tokens HotToken[]
 
   @@unique([chain, token_address])
   @@index([chain])
@@ -81,9 +82,9 @@ model HotToken {
   rat_trader_amount_rate Decimal?
   cto_flag               Int?
   hour_timestamp         DateTime // 记录对应的小时时间戳
-  
-  created_at             DateTime @default(now())
-  updated_at             DateTime @updatedAt
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@unique([chain, token_address, hour_timestamp])
   @@index([chain, token_address, hour_timestamp])
@@ -207,8 +208,8 @@ model WalletActivity {
   event_type            String       @db.VarChar(255)
   token_address         String       @db.VarChar(255)
   token                 Json?
-  token_amount          String?       @db.VarChar(255)
-  quote_amount          String?       @db.VarChar(255)
+  token_amount          String?      @db.VarChar(255)
+  quote_amount          String?      @db.VarChar(255)
   cost_usd              Float?
   buy_cost_usd          Float?
   price                 Float?
