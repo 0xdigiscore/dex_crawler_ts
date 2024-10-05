@@ -3,9 +3,9 @@ import { router } from '@/routes.js';
 import { firefox } from 'playwright';
 import { crawlerGmgnUrlConfigs } from './const/crawlerUrls.js';
 
-const proxyConfiguration = new ProxyConfiguration({
-  proxyUrls: [process.env.PROXY_URL as string],
-});
+// const proxyConfiguration = new ProxyConfiguration({
+//   proxyUrls: [process.env.PROXY_URL as string],
+// });
 
 async function main() {
   const crawler = new PlaywrightCrawler({
