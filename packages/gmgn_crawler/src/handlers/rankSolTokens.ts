@@ -6,7 +6,6 @@ export async function rankSolTokens({
   request,
   log,
   response,
-  enqueueLinks,
 }: CrawlingContext) {
   log.info(`Processing SOL Smart Wallets: ${request.url}`);
   if (response && (response as Response).ok()) {

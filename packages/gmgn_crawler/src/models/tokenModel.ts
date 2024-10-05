@@ -1,4 +1,4 @@
-import prisma from "@/database/prisma.js";
+import prisma from '@/database/prisma.js';
 
 interface TokenData {
   chain: string;
@@ -50,8 +50,8 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDate(),
-        now.getUTCHours()
-      )
+        now.getUTCHours(),
+      ),
     );
 
     for (const token of hotTokens) {
@@ -171,10 +171,10 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
     }
 
     console.log(
-      "Tokens and HotTokens have been successfully parsed and saved to the database."
+      'Tokens and HotTokens have been successfully parsed and saved to the database.',
     );
   } catch (error) {
-    console.error("Error parsing and saving tokens:", error);
+    console.error('Error parsing and saving tokens:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
