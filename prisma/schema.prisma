@@ -8,27 +8,27 @@ datasource db {
 }
 
 model Token {
-  id                     Int         @id @default(autoincrement())
-  chain                  String      @db.VarChar(255)
-  token_address          String      @db.VarChar(255)
-  symbol                 String?     @db.VarChar(255)
-  name                   String?     @db.VarChar(255)
-  logo                   String?
-  decimals               Int?
-  total_supply           Decimal?
-  website                String?
-  telegram               String?
-  twitter_username       String?     @db.VarChar(255)
-  is_open_source         Boolean?
+  id                      Int         @id @default(autoincrement())
+  chain                   String      @db.VarChar(255)
+  token_address           String      @db.VarChar(255)
+  symbol                  String?     @db.VarChar(255)
+  name                    String?     @db.VarChar(255)
+  logo                    String?
+  decimals                Int?
+  total_supply            Decimal?
+  website                 String?
+  telegram                String?
+  twitter_username        String?     @db.VarChar(255)
+  is_open_source          Boolean?
   renounced               Boolean?
   pool_creation_timestamp BigInt?
-  is_honeypot            Boolean?
-  buy_tax                Decimal?
-  sell_tax               Decimal?
-  created_at             DateTime    @default(now())
-  updated_at             DateTime    @updatedAt
-  hot_tokens             HotToken[]
-  top_traders            TopTrader[]
+  is_honeypot             Boolean?
+  buy_tax                 Decimal?
+  sell_tax                Decimal?
+  created_at              DateTime    @default(now())
+  updated_at              DateTime    @updatedAt
+  hot_tokens              HotToken[]
+  top_traders             TopTrader[]
 
   @@unique([chain, token_address])
   @@index([chain])
@@ -36,35 +36,35 @@ model Token {
 }
 
 model HotToken {
-  id                      Int      @id @default(autoincrement())
-  chain                   String   @db.VarChar(255)
-  token_address           String   @db.VarChar(255)
-  token                   Token    @relation(fields: [chain, token_address], references: [chain, token_address])
-  price                   Decimal?
-  price_change_percent    Decimal?
-  price_change_percent1h  Decimal?
-  price_change_percent1m  Decimal?
-  price_change_percent5m  Decimal?
-  swaps                   Int?
-  volume                  Decimal?
-  liquidity               Decimal?
-  market_cap              Decimal?
-  hot_level               Int?
-  call_number             Int?
-  smart_buy_24h           Int?
-  smart_sell_24h          Int?
-  open_timestamp          BigInt?
-  holder_count            Int?
-  is_show_alert           Boolean?
-  buys                    Int?
-  sells                   Int?
-  lockInfo                Json?
-  creator_token_status    String?  @db.VarChar(255)
-  creator_close           Boolean?
-  rat_trader_amount_rate  Decimal?
-  cto_flag                Int?
-  created_at              DateTime @default(now())
-  updated_at              DateTime @updatedAt
+  id                     Int      @id @default(autoincrement())
+  chain                  String   @db.VarChar(255)
+  token_address          String   @db.VarChar(255)
+  token                  Token    @relation(fields: [chain, token_address], references: [chain, token_address])
+  price                  Decimal?
+  price_change_percent   Decimal?
+  price_change_percent1h Decimal?
+  price_change_percent1m Decimal?
+  price_change_percent5m Decimal?
+  swaps                  Int?
+  volume                 Decimal?
+  liquidity              Decimal?
+  market_cap             Decimal?
+  hot_level              Int?
+  call_number            Int?
+  smart_buy_24h          Int?
+  smart_sell_24h         Int?
+  open_timestamp         BigInt?
+  holder_count           Int?
+  is_show_alert          Boolean?
+  buys                   Int?
+  sells                  Int?
+  lockInfo               Json?
+  creator_token_status   String?  @db.VarChar(255)
+  creator_close          Boolean?
+  rat_trader_amount_rate Decimal?
+  cto_flag               Int?
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
 
   @@unique([chain, token_address])
   @@index([chain])
@@ -72,108 +72,144 @@ model HotToken {
 }
 
 model TopTrader {
-  id                      Int        @id @default(autoincrement())
-  chain                   String     @db.VarChar(255)
-  token_address           String     @db.VarChar(255)
-  token                   Token      @relation(fields: [chain, token_address], references: [chain, token_address])
-  wallet_address          String     @db.VarChar(255)
-  realized_profit         Decimal?
-  unrealized_profit       Decimal?
-  profit                  Decimal?   // Corrected line
-  profit_change           Decimal?
-  buy_amount              Decimal?
-  buy_amount_cur          Decimal?
-  sell_amount             Decimal?
-  sell_amount_cur         Decimal?
-  buy_tx_count            Int?
-  buy_tx_count_cur        Int?
-  sell_tx_count           Int?
-  sell_tx_count_cur       Int?
-  last_trade_at           DateTime?
-  addr_type               Int?
-  amount_cur              Decimal?
-  usd_value               Decimal?
-  cost_cur                Decimal?
-  sell_amount_percentage  Decimal?
-  sell_volume_cur         Decimal?
-  buy_volume_cur          Decimal?
-  netflow_usd             Decimal?
-  netflow_amount          Decimal?
-  wallet_tag_v2           String?    @db.VarChar(255)
-  eth_balance             String?
-  sol_balance             String?
-  trx_balance             String?
-  balance                 String?
-  amount_percentage       Decimal?
-  unrealized_pnl          Decimal?
-  avg_cost                Decimal?
-  avg_sold                Decimal?
-  accu_amount             Decimal?
-  accu_cost               Decimal?
-  cost                    Decimal?
-  total_cost              Decimal?
-  name                    String?
-  avatar                  String?
-  twitter_username        String?    @db.VarChar(255)
-  twitter_name            String?    @db.VarChar(255)
-  tags                    String[]
-  maker_token_tags        String[]
-  tag_rank                Json?
-  created_at              DateTime   @default(now())
-  updated_at              DateTime   @updatedAt
+  id                     Int       @id @default(autoincrement())
+  chain                  String    @db.VarChar(255)
+  token_address          String    @db.VarChar(255)
+  token                  Token     @relation(fields: [chain, token_address], references: [chain, token_address])
+  wallet_address         String    @db.VarChar(255)
+  realized_profit        Decimal?
+  unrealized_profit      Decimal?
+  profit                 Decimal? // Corrected line
+  profit_change          Decimal?
+  buy_amount             Decimal?
+  buy_amount_cur         Decimal?
+  sell_amount            Decimal?
+  sell_amount_cur        Decimal?
+  buy_tx_count           Int?
+  buy_tx_count_cur       Int?
+  sell_tx_count          Int?
+  sell_tx_count_cur      Int?
+  last_trade_at          DateTime?
+  addr_type              Int?
+  amount_cur             Decimal?
+  usd_value              Decimal?
+  cost_cur               Decimal?
+  sell_amount_percentage Decimal?
+  sell_volume_cur        Decimal?
+  buy_volume_cur         Decimal?
+  netflow_usd            Decimal?
+  netflow_amount         Decimal?
+  wallet_tag_v2          String?   @db.VarChar(255)
+  eth_balance            String?
+  sol_balance            String?
+  trx_balance            String?
+  balance                String?
+  amount_percentage      Decimal?
+  unrealized_pnl         Decimal?
+  avg_cost               Decimal?
+  avg_sold               Decimal?
+  accu_amount            Decimal?
+  accu_cost              Decimal?
+  cost                   Decimal?
+  total_cost             Decimal?
+  name                   String?
+  avatar                 String?
+  twitter_username       String?   @db.VarChar(255)
+  twitter_name           String?   @db.VarChar(255)
+  tags                   String[]
+  maker_token_tags       String[]
+  tag_rank               Json?
+  created_at             DateTime  @default(now())
+  updated_at             DateTime  @updatedAt
 
+  @@unique([chain, token_address, wallet_address], name: "topTraderCompositeUnique")
   @@index([chain])
   @@index([token_address])
   @@index([wallet_address])
-  @@unique([chain, token_address, wallet_address], name: "topTraderCompositeUnique")
 }
 
 model SmartWallet {
-  id                        Int      @id @default(autoincrement())
-  source                    String?   @db.VarChar(255)
-  wallet_address            String   @unique @db.VarChar(255)
-  chain                     String   @db.VarChar(255)
-  realized_profit           Decimal?
-  buy                       Int      @default(0)
-  sell                      Int      @default(0)
-  last_active               Decimal?
-  realized_profit_1d        Decimal?
-  realized_profit_7d        Decimal?
-  realized_profit_30d       Decimal?
-  pnl_30d                   Decimal?
-  pnl_7d                    Decimal?
-  pnl_1d                    Decimal?
-  txs_30d                   Int?
-  buy_30d                   Int?
-  sell_30d                  Int?
-  eth_balance               String?   // Changed from Decimal? to String?
-  sol_balance               String?   // Changed from Decimal? to String?
-  trx_balance               String?   // Changed from Decimal? to String?
-  balance                   String?   // Changed from Decimal? to String?
-  twitter_username          String?  @db.VarChar(255)
-  avatar                    String?
-  ens                       String?  @db.VarChar(255)
-  tag_rank                  Json?
-  tags                      String[]
-  maker_avatar_color        String?  @db.VarChar(255)
-  twitter_name              String?  @db.VarChar(255)
-  followers_count           Int      @default(0)
-  is_blue_verified          Boolean  @default(false)
-  twitter_description       String?
-  avg_hold_time             Decimal?
-  winrate_7d                Decimal?
-  avg_cost_7d               Decimal?
-  pnl_lt_minus_dot5_num_7d  Int      @default(0)
-  pnl_minus_dot5_0x_num_7d  Int      @default(0)
-  pnl_lt_2x_num_7d          Int      @default(0)
-  pnl_2x_5x_num_7d          Int      @default(0)
-  pnl_gt_5x_num_7d          Int      @default(0)
-  daily_profit_7d           Json?
-  recent_buy_tokens         Json?
-  txs                       Int      @default(0)
-  created_at                DateTime @default(now())
-  updated_at                DateTime @updatedAt
+  id                       Int              @id @default(autoincrement())
+  source                   String?          @db.VarChar(255)
+  wallet_address           String           @unique @db.VarChar(255)
+  chain                    String           @db.VarChar(255)
+  realized_profit          Decimal?
+  buy                      Int              @default(0)
+  sell                     Int              @default(0)
+  last_active              Decimal?
+  realized_profit_1d       Decimal?
+  realized_profit_7d       Decimal?
+  realized_profit_30d      Decimal?
+  pnl_30d                  Decimal?
+  pnl_7d                   Decimal?
+  pnl_1d                   Decimal?
+  txs_30d                  Int?
+  buy_30d                  Int?
+  sell_30d                 Int?
+  eth_balance              String? // Changed from Decimal? to String?
+  sol_balance              String? // Changed from Decimal? to String?
+  trx_balance              String? // Changed from Decimal? to String?
+  balance                  String? // Changed from Decimal? to String?
+  twitter_username         String?          @db.VarChar(255)
+  avatar                   String?
+  ens                      String?          @db.VarChar(255)
+  tag_rank                 Json?
+  tags                     String[]
+  maker_avatar_color       String?          @db.VarChar(255)
+  twitter_name             String?          @db.VarChar(255)
+  followers_count          Int              @default(0)
+  is_blue_verified         Boolean          @default(false)
+  twitter_description      String?
+  avg_hold_time            Decimal?
+  winrate_7d               Decimal?
+  avg_cost_7d              Decimal?
+  pnl_lt_minus_dot5_num_7d Int              @default(0)
+  pnl_minus_dot5_0x_num_7d Int              @default(0)
+  pnl_lt_2x_num_7d         Int              @default(0)
+  pnl_2x_5x_num_7d         Int              @default(0)
+  pnl_gt_5x_num_7d         Int              @default(0)
+  daily_profit_7d          Json?
+  recent_buy_tokens        Json?
+  txs                      Int              @default(0)
+  created_at               DateTime         @default(now())
+  updated_at               DateTime         @updatedAt
+  wallet_activities        WalletActivity[]
 
-  @@index([wallet_address])
   @@unique([chain, wallet_address], name: "smartWalletChainWalletAddressUnique")
+  @@index([wallet_address])
+}
+
+model WalletActivity {
+  id                    Int          @id @default(autoincrement())
+  wallet_address        String       @db.VarChar(255)
+  chain                 String       @db.VarChar(255)
+  tx_hash               String       @db.VarChar(255)
+  timestamp             Int
+  event_type            String       @db.VarChar(255)
+  token_address         String       @db.VarChar(255)
+  token                 Json?
+  token_amount          String?       @db.VarChar(255)
+  quote_amount          String?       @db.VarChar(255)
+  cost_usd              Float?
+  buy_cost_usd          Float?
+  price                 Float?
+  price_usd             Float?
+  is_open_or_close      Int?
+  quote_address         String       @db.VarChar(255)
+  quote_token           Json?
+  from_address          String?      @db.VarChar(255)
+  from_is_contract      Boolean?
+  to_address            String?      @db.VarChar(255)
+  to_is_contract        Boolean?
+  balance               String?      @db.VarChar(255)
+  sell_30d              Int?
+  last_active_timestamp Int?
+  SmartWallet           SmartWallet? @relation(fields: [smartWalletId], references: [id])
+  smartWalletId         Int?
+
+  @@unique([chain, wallet_address, tx_hash], name: "walletActivityChainTxHashUnique")
+  @@index([wallet_address])
+  @@index([tx_hash])
+  @@index([token_address])
+  @@index([quote_address])
 }

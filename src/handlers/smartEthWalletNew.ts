@@ -1,11 +1,16 @@
-import { CrawlingContext } from "crawlee";
+import { CrawlingContext, EnqueueStrategy } from "crawlee";
 import { Response } from "playwright";
-import { parseAndSaveWallets, WalletData } from "@/models/walletModel.js";
+import {
+  extractWalletAddressFromUrl,
+  parseAndSaveWallets,
+  WalletData,
+} from "@/models/walletModel.js";
 
 export async function smartEthWalletNew({
   request,
   log,
   response,
+  enqueueLinks,
 }: CrawlingContext) {
   if (response && (response as Response).ok()) {
     const jsonResponse = await (response as Response).json();
@@ -67,6 +72,14 @@ export async function smartEthWalletNew({
       log.info(`Skipping wallet with unwanted tags: ${data.tags.join(", ")}`);
       return;
     }
+    const wallet_address = extractWalletAddressFromUrl(request.url);
+    // 这里抓取代币的activity 数据
+    const newUrl = `https://gmgn.ai/defi/quotation/v1/wallet_activity/eth?type=buy&type=sell&wallet=${wallet_address}&limit=10&cost=10`;
+    await enqueueLinks({
+      urls: [newUrl],
+      label: "smart/wallet/activity",
+      strategy: EnqueueStrategy.All,
+    });
 
     await parseAndSaveWallets([walletData], "eth", "1step", log, request.url);
   } else {

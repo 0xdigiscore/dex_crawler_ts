@@ -3,8 +3,8 @@ module.exports = {
     {
       name: "gmgn-crawler",
       script: "npm",
-      args: "run start:gmgn",
-      cron_restart: "*/10 * * * *",
+      args: "run start:dev",
+      cron_restart: "*/25 * * * *",
       autorestart: false,
       restart_delay: 6000,
       exp_backoff_restart_delay: 100,

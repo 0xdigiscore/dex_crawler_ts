@@ -26,8 +26,7 @@
   "scripts": {
     "start": "npm run start:dev",
     "test-firefox": "DEBUG=pw:browser node test-firefox.js",
-    "start:1step": "tsx src/1stepCrawler.ts",
-    "start:gmgn": "tsx src/main.ts",
+    "start:dev": "tsx src/main.ts",
     "build": "tsc",
     "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
     "postinstall": "npx crawlee install-playwright-browsers"

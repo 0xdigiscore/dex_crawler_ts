@@ -179,7 +179,7 @@ export async function parseAndSaveWallets(
   }
 }
 
-function extractWalletAddressFromUrl(url: string): string {
+export function extractWalletAddressFromUrl(url: string): string {
   const match = url.match(/\/walletNew\/([^?]+)/);
   return match ? match[1] : "";
 }

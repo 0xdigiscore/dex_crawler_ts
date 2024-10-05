@@ -1,6 +1,9 @@
-import { CrawlingContext } from "crawlee";
+import { CrawlingContext, EnqueueStrategy } from "crawlee";
 import { Response } from "playwright";
-import { parseAndSaveWallets } from "@/models/walletModel.js";
+import {
+  extractWalletAddressFromUrl,
+  parseAndSaveWallets,
+} from "@/models/walletModel.js";
 import { Dataset } from "crawlee";
 import { getDatasetName } from "@/const/crawlerUrls.js";
 import { storeData } from "@/utils/storedata.js";
@@ -9,6 +12,7 @@ export async function rankSolWallets({
   request,
   log,
   response,
+  enqueueLinks,
 }: CrawlingContext) {
   log.info(`Processing SOL Smart Wallets: ${request.url}`);
   if (response && (response as Response).ok()) {
@@ -21,6 +25,16 @@ export async function rankSolWallets({
     // Store data for each address
     const datasetName = getDatasetName(request.url);
     // await storeData(request.url, data, datasetName, log);
+    for (const wallet of walletsData) {
+      const walletAddress = wallet.wallet_address || wallet.address || "";
+      // 这里抓取代币的activity 数据
+      const newUrl = `https://gmgn.ai/defi/quotation/v1/wallet_activity/sol?type=buy&type=sell&wallet=${walletAddress}&limit=10&cost=10`;
+      await enqueueLinks({
+        urls: [newUrl],
+        label: "smart/wallet/activity",
+        strategy: EnqueueStrategy.All,
+      });
+    }
 
     await parseAndSaveWallets(walletsData, "sol", "gmgn", log);
   } else {

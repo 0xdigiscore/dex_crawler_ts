@@ -12,7 +12,7 @@ async function main() {
     requestHandler: router,
     // Unified Cookies Management and Rate Limiting
     sessionPoolOptions: {
-      maxPoolSize: 10,
+      maxPoolSize: 20,
     },
     launchContext: {
       // Set the Firefox browser to be used by the crawler.
@@ -20,9 +20,9 @@ async function main() {
       // default Chromium browser will be used.
       launcher: firefox,
     },
-    maxRequestsPerCrawl: 2000,
+    maxRequestsPerCrawl: 5000,
     maxRequestRetries: 10,
-    maxRequestsPerMinute: 120,
+    maxRequestsPerMinute: 300,
     maxConcurrency: 2,
     browserPoolOptions: {
       useFingerprints: true,
