@@ -45,7 +45,6 @@ model Token {
   transactions_24h_buys   Int?
   transactions_24h_sells  Int?
 
-  hot_tokens              HotToken[]
   top_traders             TopTrader[]
 
   @@unique([chain, token_address])
@@ -81,12 +80,14 @@ model HotToken {
   creator_close          Boolean?
   rat_trader_amount_rate Decimal?
   cto_flag               Int?
+  hour_timestamp         DateTime // 记录对应的小时时间戳
+  
   created_at             DateTime @default(now())
   updated_at             DateTime @updatedAt
 
-  @@unique([chain, token_address])
-  @@index([chain])
-  @@index([token_address])
+  @@unique([chain, token_address, hour_timestamp])
+  @@index([chain, token_address, hour_timestamp])
+  @@index([hour_timestamp])
 }
 
 model TopTrader {
