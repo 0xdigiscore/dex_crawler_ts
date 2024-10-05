@@ -27,6 +27,24 @@ model Token {
   sell_tax                Decimal?
   created_at              DateTime    @default(now())
   updated_at              DateTime    @updatedAt
+
+  market_cap              Float?
+  fully_diluted_valuation Float?
+  liquidity               Float?
+  volume_24h              Float?
+  price                   Float?
+  deploy_time             DateTime?
+  can_mint                Boolean?
+  has_renounced_ownership Boolean?
+  top_pools               String?
+  description             String?     @db.Text
+  price_change_1h         Float?
+  price_change_24h        Float?
+  transactions_1h_buys    Int?
+  transactions_1h_sells   Int?
+  transactions_24h_buys   Int?
+  transactions_24h_sells  Int?
+
   hot_tokens              HotToken[]
   top_traders             TopTrader[]
 
