@@ -241,9 +241,10 @@ model GmgnSignal {
   timestamp         BigInt
   maker             String?
   token_address     String       @db.VarChar(255)
+  token_symbol      String?      @db.VarChar(255)
   chain             String       @db.VarChar(255)
   token_price       Decimal?
-  from_timestamp    Decimal?
+  from_timestamp    Int?
   updated_at        Decimal?
   buy_duration      Int?
   buy_usd           Decimal?

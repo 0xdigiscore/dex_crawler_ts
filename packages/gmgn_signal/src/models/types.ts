@@ -67,10 +67,9 @@ export interface GmgnSignalData {
   signal_1h_count: number;
   first_entry_price: number;
   price_change: number;
-  link: LinkData;
+  link: string[];
   token: TokenData;
-  recent_buys: RecentBuysData;
+  recent_buys: string[];
   previous_signals: PreviousSignal[];
   is_first: boolean;
-  // 其他相关字段...
 }

@@ -14,6 +14,7 @@ export async function storeSignals(
       const existingSignal = await tx.gmgnSignal.findUnique({
         where: { id: signal.id },
       });
+      console.log(`signal: ${JSON.stringify(signal)}`);
 
       if (existingSignal) {
         // 如果信号已存在，跳过此信号
@@ -51,6 +52,23 @@ export async function storeSignals(
         },
       });
 
+      // 检查 previous_signals 是否存在
+      let previousSignalsConnect = [];
+      if (signal.previous_signals && signal.previous_signals.length > 0) {
+        const existingPreviousSignals = await tx.gmgnSignal.findMany({
+          where: {
+            id: {
+              in: signal.previous_signals.map((ps) => ps.id),
+            },
+          },
+          select: { id: true },
+        });
+
+        previousSignalsConnect = existingPreviousSignals.map((ps) => ({
+          id: ps.id,
+        }));
+      }
+
       // 创建新的 GmgnSignal
       const createdSignal = await tx.gmgnSignal.create({
         data: {
@@ -58,6 +76,8 @@ export async function storeSignals(
           timestamp: BigInt(signal.timestamp),
           maker: signal.maker,
           token_address: signal.token_address,
+          //@ts-ignore
+          token_symbol: signal.token?.symbol,
           chain: signal.token?.chain,
           token_price: signal.token_price,
           from_timestamp: signal.from_timestamp,
@@ -71,12 +91,12 @@ export async function storeSignals(
           signal_1h_count: signal.signal_1h_count,
           first_entry_price: signal.first_entry_price,
           price_change: signal.price_change,
-          link: signal.link!.toString(),
-          recent_buys: signal.recent_buys!.toString(),
+          link: signal.link,
+          recent_buys: signal.recent_buys,
           is_first: signal.is_first,
-          // 处理 previous_signals 关系
+          // 只连接存在的 previous_signals
           previous_signals: {
-            connect: signal.previous_signals.map((ps) => ({ id: ps.id })),
+            connect: previousSignalsConnect,
           },
         },
       });
