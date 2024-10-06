@@ -1,23 +1,23 @@
 // packages/gmgn_crawler/src/models/types.ts
 
-export interface TokenData {
+interface TokenData {
   chain: string;
-  token_address: string;
-  symbol?: string;
-  name?: string;
-  logo?: string;
-  decimals?: number;
-  total_supply?: number;
-  website?: string;
-  telegram?: string;
-  twitter_username?: string;
-  is_open_source?: boolean;
-  renounced?: boolean;
-  pool_creation_timestamp?: bigint;
-  is_honeypot?: boolean;
-  buy_tax?: number;
-  sell_tax?: number;
-  // 其他相关字段...
+  address: string;
+  symbol: string;
+  logo: string;
+  is_honeypot: number;
+  is_open_source: number;
+  renounced: number;
+  twitter_username: string;
+  website: string;
+  telegram: string;
+  buy_tax: number;
+  sell_tax: number;
+  price: number;
+  pool_creation_timestamp: number;
+  decimals: number;
+  total_supply: number;
+  name: string;
 }
 
 export interface LinkData {

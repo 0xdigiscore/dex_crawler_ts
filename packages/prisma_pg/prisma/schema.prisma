@@ -242,21 +242,22 @@ model GmgnSignal {
   maker             String?
   token_address     String       @db.VarChar(255)
   chain             String       @db.VarChar(255)
-  token_price       Decimal
-  from_timestamp    BigInt
-  updated_at        BigInt
-  buy_duration      Int
-  buy_usd           Decimal
-  tx_count          Int
-  signal_type       String       @db.VarChar(255)
-  smart_buy         Int
-  smart_sell        Int
-  signal_1h_count   Int
-  first_entry_price Decimal
-  price_change      Float
-  link              Json
-  recent_buys       Json
-  is_first          Boolean
+  token_price       Decimal?
+  from_timestamp    Decimal?
+  updated_at        Decimal?
+  buy_duration      Int?
+  buy_usd           Decimal?
+  tx_count          Int?
+  signal_type       String?       @db.VarChar(255)
+  smart_buy         Int?
+  smart_sell        Int?
+  signal_1h_count   Int?
+  first_entry_price Decimal?
+  price_change      Float?
+  link              Json?
+  recent_buys       Json?
+  is_first          Boolean?
+  created_at        DateTime     @default(now())
 
   token             Token        @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
 
