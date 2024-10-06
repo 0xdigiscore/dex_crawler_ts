@@ -14,7 +14,6 @@ export async function storeSignals(
       const existingSignal = await tx.gmgnSignal.findUnique({
         where: { id: signal.id },
       });
-      console.log(`signal: ${JSON.stringify(signal)}`);
 
       if (existingSignal) {
         // 如果信号已存在，跳过此信号
