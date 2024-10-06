@@ -13,6 +13,7 @@ interface TokenData {
   telegram: string;
   buy_tax: number;
   sell_tax: number;
+  price: number;
   pool_creation_timestamp: number;
 }
 

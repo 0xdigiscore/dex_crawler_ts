@@ -27,6 +27,9 @@
     },
     {
       "path": "packages/gmgn_crawler"
+    },
+    {
+      "path": "packages/gmgn_signal"
     }
   ]
 }

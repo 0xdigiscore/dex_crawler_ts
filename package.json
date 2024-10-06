@@ -37,13 +37,14 @@
   },
   "scripts": {
     "start": "yarn run start:dev",
-    "start:dev": "concurrently \"yarn workspace @dex_crawler/gmgn_crawler start\" \"yarn workspace @dex_crawler/prisma generate\"",
+    "start:dev": "dotenv -e .env -- concurrently \"yarn workspace @dex_crawler/gmgn_crawler start\" \"yarn workspace @dex_crawler/prisma generate\"",
+    "start:signal": "dotenv -e .env -- yarn workspace @dex_crawler/gmgn_signal dev",
     "build": "tsc -b",
     "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
     "postinstall": "npx crawlee install-playwright-browsers",
     "bootstrap": "lerna bootstrap",
-    "prisma:generate": "yarn workspace @dex_crawler/prisma generate",
-    "prisma:migrate": "yarn workspace @dex_crawler/prisma migrate"
+    "prisma:generate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma generate",
+    "prisma:migrate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma migrate"
   },
   "author": "It's not you it's me",
   "license": "ISC"

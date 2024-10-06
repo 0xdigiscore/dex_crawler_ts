@@ -9,25 +9,25 @@ datasource db {
 }
 
 model Token {
-  id                      Int      @id @default(autoincrement())
-  chain                   String   @db.VarChar(255)
-  token_address           String   @db.VarChar(255)
-  symbol                  String?  @db.VarChar(255)
-  name                    String?  @db.VarChar(255)
+  id                      Int        @id @default(autoincrement())
+  chain                   String     @db.VarChar(255)
+  token_address           String     @db.VarChar(255)
+  symbol                  String?    @db.VarChar(255)
+  name                    String?    @db.VarChar(255)
   logo                    String?
   decimals                Int?
   total_supply            Decimal?
   website                 String?
   telegram                String?
-  twitter_username        String?  @db.VarChar(255)
+  twitter_username        String?    @db.VarChar(255)
   is_open_source          Boolean?
   renounced               Boolean?
   pool_creation_timestamp BigInt?
   is_honeypot             Boolean?
   buy_tax                 Decimal?
   sell_tax                Decimal?
-  created_at              DateTime @default(now())
-  updated_at              DateTime @updatedAt
+  created_at              DateTime   @default(now())
+  updated_at              DateTime   @updatedAt
 
   market_cap              Float?
   fully_diluted_valuation Float?
@@ -38,7 +38,7 @@ model Token {
   can_mint                Boolean?
   has_renounced_ownership Boolean?
   top_pools               String?
-  description             String?   @db.Text
+  description             String?    @db.Text
   price_change_1h         Float?
   price_change_24h        Float?
   transactions_1h_buys    Int?
@@ -46,8 +46,9 @@ model Token {
   transactions_24h_buys   Int?
   transactions_24h_sells  Int?
 
-  top_traders TopTrader[]
-  hot_tokens HotToken[]
+  top_traders  TopTrader[]
+  hot_tokens   HotToken[]
+  gmgnSignals  GmgnSignal[] @relation("TokenGmgnSignals")
 
   @@unique([chain, token_address])
   @@index([chain])
@@ -233,4 +234,35 @@ model WalletActivity {
   @@index([tx_hash])
   @@index([token_address])
   @@index([quote_address])
+}
+
+model GmgnSignal {
+  id                Int          @id @unique // 添加 @unique 约束
+  timestamp         BigInt
+  maker             String?
+  token_address     String       @db.VarChar(255)
+  chain             String       @db.VarChar(255)
+  token_price       Decimal
+  from_timestamp    BigInt
+  updated_at        BigInt
+  buy_duration      Int
+  buy_usd           Decimal
+  tx_count          Int
+  signal_type       String       @db.VarChar(255)
+  smart_buy         Int
+  smart_sell        Int
+  signal_1h_count   Int
+  first_entry_price Decimal
+  price_change      Float
+  link              Json
+  recent_buys       Json
+  is_first          Boolean
+
+  token             Token        @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
+
+  // 自引用关系，用于关联 previous_signals
+  previous_signals   GmgnSignal[] @relation("GmgnSignalPreviousSignals")
+  next_signals       GmgnSignal[] @relation("GmgnSignalPreviousSignals")
+
+  @@index([chain, token_address])
 }

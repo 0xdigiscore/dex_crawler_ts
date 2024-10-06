@@ -1,0 +1,22 @@
+{
+  "name": "@dex_crawler/gmgn_signal",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/main.js",
+    "dev": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "@dex_crawler/prisma": "^1.0.0",
+    "pg": "^8.13.0",
+    "playwright": "*",
+    "playwright-extra": "^4.3.6",
+    "puppeteer": "^23.4.1",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {}
+}
