@@ -1,49 +1,6 @@
 import prisma from '@/database/prisma.js';
 
-interface TokenData {
-  chain: string;
-  address: string;
-  symbol: string;
-  logo: string;
-  is_honeypot: number;
-  is_open_source: number;
-  renounced: number;
-  twitter_username: string;
-  website: string;
-  telegram: string;
-  buy_tax: number;
-  sell_tax: number;
-  price: number;
-  pool_creation_timestamp: number;
-}
-
-interface HotTokenData extends TokenData {
-  price: number;
-  price_change_percent: number;
-  price_change_percent1m: number;
-  price_change_percent5m: number;
-  price_change_percent1h: number;
-  swaps: number;
-  volume: number;
-  liquidity: number;
-  market_cap: number;
-  hot_level: number;
-  call_number: number;
-  smart_buy_24h: number;
-  smart_sell_24h: number;
-  open_timestamp: number;
-  holder_count: number;
-  is_show_alert: boolean;
-  buys: number;
-  sells: number;
-  lockInfo: object;
-  creator_token_status: string;
-  creator_close: boolean;
-  rat_trader_amount_rate: number;
-  cto_flag: number;
-}
-
-async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
+async function parseAndSaveHotTokens(data: any[]) {
   try {
     const now = new Date(new Date().toUTCString());
     const hourTimestamp = new Date(
@@ -55,7 +12,7 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
       ),
     );
 
-    for (const token of hotTokens) {
+    for (const token of data) {
       await prisma.$transaction(async (tx) => {
         // 1. Upsert the Token first to satisfy the foreign key constraint
         await tx.token.upsert({
@@ -68,15 +25,26 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
           update: {
             symbol: token.symbol,
             logo: token.logo,
+
             is_honeypot: token.is_honeypot === 1,
             is_open_source: token.is_open_source === 1,
-            renounced: token.renounced === 1,
+            //@ts-ignore
+            is_show_alert: token.is_show_alert,
+            cto_flag: token.cto_flag,
+            creator_close: token.creator_close,
+            creator_token_status: token.creator_token_status,
+            hot_level: token.hot_level,
+            call_number: token.call_number,
+
+            renounced: token.renounced,
             twitter_username: token.twitter_username,
             website: token.website,
             telegram: token.telegram,
             buy_tax: token.buy_tax,
             sell_tax: token.sell_tax,
             pool_creation_timestamp: token.pool_creation_timestamp,
+            //@ts-ignore
+            lockInfo: token.lockInfo,
           },
           create: {
             chain: token.chain,
@@ -85,13 +53,46 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
             logo: token.logo,
             is_honeypot: token.is_honeypot === 1,
             is_open_source: token.is_open_source === 1,
-            renounced: token.renounced === 1,
+            //@ts-ignore
+            is_show_alert: token.is_show_alert,
+            cto_flag: token.cto_flag,
+            creator_close: token.creator_close,
+            creator_token_status: token.creator_token_status,
+            hot_level: token.hot_level,
+            call_number: token.call_number,
+
+            renounced: token.renounced,
             twitter_username: token.twitter_username,
             website: token.website,
             telegram: token.telegram,
             buy_tax: token.buy_tax,
             sell_tax: token.sell_tax,
             pool_creation_timestamp: token.pool_creation_timestamp,
+            //@ts-ignore
+            lockInfo: token.lockInfo,
+          },
+        });
+        // 2. Create TokenMetrics
+        // @ts-ignore
+        await tx.tokenMetrics.create({
+          data: {
+            chain: token.chain,
+            token_address: token.address,
+            timestamp: now,
+            price: token.price,
+            market_cap: token.market_cap,
+            liquidity: token.liquidity,
+            volume_24h: token.volume,
+            holder_count: token.holder_count,
+            swaps: token.swaps,
+            buys: token.buys,
+            sells: token.sells,
+            price_change_percent: token.price_change_percent,
+            price_change_percent1h: token.price_change_percent1h,
+            price_change_percent1m: token.price_change_percent1m,
+            price_change_percent5m: token.price_change_percent5m,
+            smart_buy_24h: token.smart_buy_24h,
+            smart_sell_24h: token.smart_sell_24h,
           },
         });
 
@@ -109,30 +110,9 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
           await tx.hotToken.update({
             where: { id: existingHotToken.id },
             data: {
-              price: token.price,
-              price_change_percent: token.price_change_percent,
-              price_change_percent1h: token.price_change_percent1h,
-              price_change_percent1m: token.price_change_percent1m,
-              price_change_percent5m: token.price_change_percent5m,
-              swaps: token.swaps,
-              volume: token.volume,
-              liquidity: token.liquidity,
-              market_cap: token.market_cap,
-              hot_level: token.hot_level,
-              call_number: token.call_number,
-              smart_buy_24h: token.smart_buy_24h,
-              smart_sell_24h: token.smart_sell_24h,
-              open_timestamp: token.open_timestamp,
-              holder_count: token.holder_count,
-              is_show_alert: token.is_show_alert,
-              buys: token.buys,
-              sells: token.sells,
-              lockInfo: token.lockInfo,
-              creator_token_status: token.creator_token_status,
-              creator_close: token.creator_close,
-              rat_trader_amount_rate: token.rat_trader_amount_rate,
-              cto_flag: token.cto_flag,
-              updated_at: now,
+              chain: token.chain,
+              token_address: token.address,
+              hour_timestamp: hourTimestamp,
             },
           });
         } else {
@@ -142,29 +122,6 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
               chain: token.chain,
               token_address: token.address,
               hour_timestamp: hourTimestamp,
-              price: token.price,
-              price_change_percent: token.price_change_percent,
-              price_change_percent1h: token.price_change_percent1h,
-              price_change_percent1m: token.price_change_percent1m,
-              price_change_percent5m: token.price_change_percent5m,
-              swaps: token.swaps,
-              volume: token.volume,
-              liquidity: token.liquidity,
-              market_cap: token.market_cap,
-              hot_level: token.hot_level,
-              call_number: token.call_number,
-              smart_buy_24h: token.smart_buy_24h,
-              smart_sell_24h: token.smart_sell_24h,
-              open_timestamp: token.open_timestamp,
-              holder_count: token.holder_count,
-              is_show_alert: token.is_show_alert,
-              buys: token.buys,
-              sells: token.sells,
-              lockInfo: token.lockInfo,
-              creator_token_status: token.creator_token_status,
-              creator_close: token.creator_close,
-              rat_trader_amount_rate: token.rat_trader_amount_rate,
-              cto_flag: token.cto_flag,
             },
           });
         }
@@ -182,4 +139,4 @@ async function parseAndSaveHotTokens(hotTokens: HotTokenData[]) {
   }
 }
 
-export { parseAndSaveHotTokens, TokenData, HotTokenData };
+export { parseAndSaveHotTokens };

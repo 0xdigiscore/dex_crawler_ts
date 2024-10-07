@@ -8,6 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Token {
   id                      Int        @id @default(autoincrement())
   chain                   String     @db.VarChar(255)
@@ -17,81 +18,100 @@ model Token {
   logo                    String?
   decimals                Int?
   total_supply            Decimal?
+
   website                 String?
   telegram                String?
   twitter_username        String?    @db.VarChar(255)
-  is_open_source          Boolean?
-  renounced               Boolean?
-  pool_creation_timestamp BigInt?
-  is_honeypot             Boolean?
-  buy_tax                 Decimal?
-  sell_tax                Decimal?
-  created_at              DateTime   @default(now())
-  updated_at              DateTime   @updatedAt
 
-  market_cap              Float?
-  fully_diluted_valuation Float?
-  liquidity               Float?
-  volume_24h              Float?
-  price                   Float?
+  top_pools               String?
+  pool_creation_timestamp BigInt?
   deploy_time             DateTime?
+  description             String?    @db.Text
   can_mint                Boolean?
   has_renounced_ownership Boolean?
-  top_pools               String?
-  description             String?    @db.Text
-  price_change_1h         Float?
-  price_change_24h        Float?
-  transactions_1h_buys    Int?
-  transactions_1h_sells   Int?
-  transactions_24h_buys   Int?
-  transactions_24h_sells  Int?
+
+  hot_level               Int?
+  call_number             Int?
+  rat_trader_amount_rate  Decimal?   
+  
+  is_open_source          Boolean?
+  is_honeypot             Boolean?
+  is_show_alert           Boolean?
+  renounced               Int?
+  cto_flag                Int?
+  buy_tax                 Decimal?
+  sell_tax                Decimal?
+  lockInfo                Json?
+  creator_token_status    String?  @db.VarChar(255)
+  creator_close           Boolean?
+
+  created_at              DateTime   @default(now())
+  updated_at              DateTime   @updatedAt
 
   top_traders  TopTrader[]
   hot_tokens   HotToken[]
   gmgnSignals  GmgnSignal[] @relation("TokenGmgnSignals")
+  tokenMetrics TokenMetrics[]
 
   @@unique([chain, token_address])
   @@index([chain])
   @@index([token_address])
 }
 
-model HotToken {
-  id                     Int      @id @default(autoincrement())
-  chain                  String   @db.VarChar(255)
-  token_address          String   @db.VarChar(255)
-  token                  Token    @relation(fields: [chain, token_address], references: [chain, token_address])
-  price                  Decimal?
-  price_change_percent   Decimal?
-  price_change_percent1h Decimal?
-  price_change_percent1m Decimal?
-  price_change_percent5m Decimal?
-  swaps                  Int?
-  volume                 Decimal?
-  liquidity              Decimal?
-  market_cap             Decimal?
-  hot_level              Int?
-  call_number            Int?
-  smart_buy_24h          Int?
-  smart_sell_24h         Int?
-  open_timestamp         BigInt?
-  holder_count           Int?
-  is_show_alert          Boolean?
-  buys                   Int?
-  sells                  Int?
-  lockInfo               Json?
-  creator_token_status   String?  @db.VarChar(255)
-  creator_close          Boolean?
-  rat_trader_amount_rate Decimal?
-  cto_flag               Int?
-  hour_timestamp         DateTime // 记录对应的小时时间戳
+model TokenMetrics {
+  id                      Int      @id @default(autoincrement())
+  chain                   String   @db.VarChar(255)
+  token_address           String   @db.VarChar(255)
+  token                   Token    @relation(fields: [chain, token_address], references: [chain, token_address])
+  timestamp               DateTime
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  price                   Float?
+  market_cap              Float?
+  fully_diluted_valuation Float?
+  liquidity               Float?
+  volume_24h              Float?
+  holder_count            Int?
+  swaps                   Int?
+  buys                    Int?
+  sells                   Int?
+  
+  price_change_1h         Float?
+  price_change_24h        Float?
+  price_change_percent    Decimal?
+  price_change_percent1h  Decimal?
+  price_change_percent1m  Decimal?
+  price_change_percent5m  Decimal?
+  
+  transactions_1h_buys    Int?
+  transactions_1h_sells   Int?
+  transactions_24h_buys   Int?
+  transactions_24h_sells  Int?
+  
+  smart_buy_24h           Int?
+  smart_sell_24h          Int?
+
+  created_at              DateTime @default(now())
+
+  @@unique([chain, token_address, timestamp])
+  @@index([chain, token_address, timestamp])
+  @@index([timestamp])
+}
+
+
+model HotToken {
+  id               Int      @id @default(autoincrement())
+  chain            String   @db.VarChar(255)
+  token_address    String   @db.VarChar(255)
+  token            Token    @relation(fields: [chain, token_address], references: [chain, token_address])
+  hour_timestamp   DateTime // 记录对应的小时时间戳
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 
   @@unique([chain, token_address, hour_timestamp])
   @@index([chain, token_address, hour_timestamp])
   @@index([hour_timestamp])
 }
+
 
 model TopTrader {
   id                     Int       @id @default(autoincrement())

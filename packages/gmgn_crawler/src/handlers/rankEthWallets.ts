@@ -1,11 +1,9 @@
-import { CrawlingContext, EnqueueStrategy } from "crawlee";
-import { Response } from "playwright";
+import { CrawlingContext, EnqueueStrategy } from 'crawlee';
+import { Response } from 'playwright';
 import {
   parseAndSaveWallets,
   extractWalletAddressFromUrl,
-} from "@/models/walletModel.js";
-import { getDatasetName } from "@/const/crawlerUrls.js";
-import { storeData } from "@/utils/storedata.js";
+} from '@/models/walletModel.js';
 
 export async function rankEthWallets({
   request,
@@ -23,17 +21,17 @@ export async function rankEthWallets({
     const walletsData = Array.isArray(data.rank) ? data.rank : [data.rank];
 
     for (const wallet of walletsData) {
-      const walletAddress = wallet.wallet_address || wallet.address || "";
+      const walletAddress = wallet.wallet_address || wallet.address || '';
       // 这里抓取代币的activity 数据
       const newUrl = `https://gmgn.ai/defi/quotation/v1/wallet_activity/eth?type=buy&type=sell&wallet=${walletAddress}&limit=10&cost=10`;
       await enqueueLinks({
         urls: [newUrl],
-        label: "smart/wallet/activity",
+        label: 'smart/wallet/activity',
         strategy: EnqueueStrategy.All,
       });
     }
 
-    await parseAndSaveWallets(walletsData, "eth", "gmgn", log);
+    await parseAndSaveWallets(walletsData, 'eth', 'gmgn', log);
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
   }
