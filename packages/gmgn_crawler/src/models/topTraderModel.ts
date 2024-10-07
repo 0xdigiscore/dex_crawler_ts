@@ -71,18 +71,8 @@ export async function upsertTopTrader(
   if (existingRecord) {
     return;
   }
-  await prisma.topTrader.upsert({
-    where: {
-      topTraderCompositeUnique: {
-        chain: chain,
-        token_address: tokenAddress,
-        wallet_address: topTraderData.address,
-        //@ts-ignore
-        hour_timestamp: hourTimestamp,
-      },
-    },
-
-    create: {
+  await prisma.topTrader.create({
+    data: {
       chain: chain,
       token_address: tokenAddress,
       wallet_address: topTraderData.address,
