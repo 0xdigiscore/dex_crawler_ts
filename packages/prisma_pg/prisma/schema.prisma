@@ -161,10 +161,13 @@ model TopTrader {
   tags                   String[]
   maker_token_tags       String[]
   tag_rank               Json?
+
+  hour_timestamp         DateTime  // 新增字段，用于记录每小时的时间戳
+
   created_at             DateTime  @default(now())
   updated_at             DateTime  @updatedAt
 
-  @@unique([chain, token_address, wallet_address], name: "topTraderCompositeUnique")
+  @@unique([chain, token_address, wallet_address, hour_timestamp], name: "topTraderCompositeUnique")
   @@index([chain])
   @@index([token_address])
   @@index([wallet_address])

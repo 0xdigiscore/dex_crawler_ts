@@ -1,6 +1,6 @@
-import { CrawlingContext } from "crawlee";
-import { Response } from "playwright";
-import { parseAndSaveHotTokens } from "../models/tokenModel.js";
+import { CrawlingContext } from 'crawlee';
+import { Response } from 'playwright';
+import { parseAndSaveHotTokens } from '../models/tokenModel.js';
 
 export async function rankEthTokens({
   request,
@@ -18,12 +18,12 @@ export async function rankEthTokens({
     const addresses =
       jsonResponse?.data?.rank?.map((item: any) => item.address) || [];
     if (addresses.length === 0) {
-      log.info("No addresses found in jsonResponse.data.data.rank");
+      log.info('No addresses found in jsonResponse.data.data.rank');
     }
     for (const address of addresses) {
-      const newUrl = `https://gmgn.ai/defi/quotation/v1/tokens/top_traders/eth/${address}?orderby=realized_profit&direction=desc&tag=smart_degen`;
+      const newUrl = `https://gmgn.ai/defi/quotation/v1/tokens/top_traders/eth/${address}?orderby=profit&direction=desc`;
 
-      await enqueueLinks({ urls: [newUrl], label: "top/token/traders" });
+      await enqueueLinks({ urls: [newUrl], label: 'top/token/traders' });
     }
   } else {
     log.error(`Failed to fetch data from ${request.url}`);

@@ -53,7 +53,7 @@ export async function storeSignals(
               telegram: signal.token?.telegram,
               twitter_username: signal.token?.twitter_username,
               is_open_source: signal.token?.is_open_source === 1,
-              renounced: signal.token?.renounced === 1,
+              renounced: signal.token?.renounced,
               pool_creation_timestamp: signal.token?.pool_creation_timestamp,
               is_honeypot: signal.token?.is_honeypot === 1,
               buy_tax: signal.token?.buy_tax,

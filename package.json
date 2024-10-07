@@ -42,7 +42,7 @@
     "start:signal": "dotenv -e .env -- yarn workspace @dex_crawler/gmgn_signal dev",
     "start:gmgn_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gmgn_crawler dev",
     "build": "tsc -b",
-    "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
+    "test": "node test-firefox.js",
     "postinstall": "npx crawlee install-playwright-browsers",
     "bootstrap": "lerna bootstrap",
     "prisma:generate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma generate",
