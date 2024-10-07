@@ -1,4 +1,4 @@
-import prisma from "@/database/prisma.js";
+import prisma from '@/database/prisma.js';
 
 export interface WalletData {
   wallet_address?: string;
@@ -51,10 +51,10 @@ export async function parseAndSaveWallets(
   chain: string,
   source: string,
   log: any,
-  request_url?: string
+  request_url?: string,
 ) {
   for (const wallet of walletsData) {
-    let wallet_address = wallet.wallet_address || wallet.address || "";
+    let wallet_address = wallet.wallet_address || wallet.address || '';
     if (!wallet_address && request_url) {
       wallet_address = extractWalletAddressFromUrl(request_url);
     }
@@ -63,9 +63,9 @@ export async function parseAndSaveWallets(
       console.log(`wallet_address is empty`);
       continue;
     }
-    const unwantedTags = ["sandwich_bot", "scammer"];
+    const unwantedTags = ['sandwich_bot', 'scammer'];
     if (wallet && wallet.tags.some((tag) => unwantedTags.includes(tag))) {
-      log.info(`Skipping wallet with unwanted tags: ${wallet.tags.join(", ")}`);
+      log.info(`Skipping wallet with unwanted tags: ${wallet.tags.join(', ')}`);
       return;
     }
 
@@ -105,7 +105,7 @@ export async function parseAndSaveWallets(
           twitter_name: wallet.twitter_name,
           followers_count: wallet.followers_count,
           is_blue_verified:
-            typeof wallet.is_blue_verified === "boolean"
+            typeof wallet.is_blue_verified === 'boolean'
               ? wallet.is_blue_verified
               : wallet.is_blue_verified === 1,
           twitter_description: wallet.twitter_description,
@@ -150,7 +150,7 @@ export async function parseAndSaveWallets(
           twitter_name: wallet.twitter_name,
           followers_count: wallet.followers_count,
           is_blue_verified:
-            typeof wallet.is_blue_verified === "boolean"
+            typeof wallet.is_blue_verified === 'boolean'
               ? wallet.is_blue_verified
               : wallet.is_blue_verified === 1,
           twitter_description: wallet.twitter_description,
@@ -173,7 +173,7 @@ export async function parseAndSaveWallets(
       console.log(`error: ${error}`);
       log.error(
         `Error processing wallet: ${wallet_address}`,
-        error ?? "Unknown error"
+        error ?? 'Unknown error',
       );
     }
   }
@@ -181,5 +181,5 @@ export async function parseAndSaveWallets(
 
 export function extractWalletAddressFromUrl(url: string): string {
   const match = url.match(/\/walletNew\/([^?]+)/);
-  return match ? match[1] : "";
+  return match ? match[1] : '';
 }

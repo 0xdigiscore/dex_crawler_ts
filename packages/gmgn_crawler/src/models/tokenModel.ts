@@ -13,6 +13,13 @@ async function parseAndSaveHotTokens(data: any[]) {
     );
 
     for (const token of data) {
+      if (token.is_honeypot === 1 || token.is_show_alert) {
+        console.log(
+          `Skipping token ${token.address} because it is a honeypot or show alert`,
+        );
+        break;
+      }
+
       await prisma.$transaction(async (tx) => {
         // 1. Upsert the Token first to satisfy the foreign key constraint
         await tx.token.upsert({
