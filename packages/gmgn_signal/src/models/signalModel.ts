@@ -6,15 +6,14 @@ const prisma = new PrismaClient();
 export async function storeSignals(
   signals: GmgnSignalData[],
 ): Promise<GmgnSignal[]> {
-  try {
-    return await prisma.$transaction(async (tx) => {
-      const storedSignals: GmgnSignal[] = [];
+  const storedSignals: GmgnSignal[] = [];
 
-      for (const signal of signals) {
-        try {
+  for (const signal of signals) {
+    try {
+      const storedSignal = await prisma.$transaction(
+        async (tx) => {
           // Check if tx is defined
           if (!tx || typeof tx.gmgnSignal?.findUnique !== 'function') {
-            console.error('Transaction object is invalid:', tx);
             throw new Error('Invalid transaction object');
           }
 
@@ -24,12 +23,10 @@ export async function storeSignals(
           });
 
           if (existingSignal) {
-            // 如果信号已存在，跳过此信号
             console.log(
               `Signal with id ${signal.id} already exists. Skipping.`,
             );
-            storedSignals.push(existingSignal);
-            continue;
+            return existingSignal;
           }
 
           // 检查并创建 Token（如果不存在）
@@ -61,28 +58,32 @@ export async function storeSignals(
             },
           });
           const now = new Date(new Date().toUTCString());
-          try {
-            await tx.tokenMetrics.create({
-              data: {
+
+          await tx.tokenMetrics.upsert({
+            where: {
+              chain_token_address_timestamp: {
                 chain: signal.token?.chain,
                 token_address: signal.token.address,
                 timestamp: now,
-                price: signal.token.price,
-                market_cap: Number(signal.token.market_cap),
-                liquidity: Number(signal.token.liquidity),
-                volume_24h: Number(signal.token.volume),
-                holder_count: signal.token.holder_count,
-                swaps: signal.token.swaps,
-                buys: signal.token.buys,
-                sells: signal.token.sells,
-                price_change_percent: signal.token.price_change_percent,
-                price_change_percent1h: signal.token.price_change_percent1h,
               },
-            });
-          } catch (error) {
-            console.error('Failed to insert tokenMetrics:', error);
-            // 如果插入失败，这里不做任何特殊处理，让程序继续执行
-          }
+            },
+            update: {}, // If it exists, don't update anything
+            create: {
+              chain: signal.token?.chain,
+              token_address: signal.token.address,
+              timestamp: now,
+              price: signal.token.price,
+              market_cap: Number(signal.token.market_cap),
+              liquidity: Number(signal.token.liquidity),
+              volume_24h: Number(signal.token.volume),
+              holder_count: signal.token.holder_count,
+              swaps: signal.token.swaps,
+              buys: signal.token.buys,
+              sells: signal.token.sells,
+              price_change_percent: signal.token.price_change_percent,
+              price_change_percent1h: signal.token.price_change_percent1h,
+            },
+          });
 
           // 检查 previous_signals 是否存在
           let previousSignalsConnect = [];
@@ -102,7 +103,7 @@ export async function storeSignals(
           }
 
           // 创建新的 GmgnSignal
-          const createdSignal = await tx.gmgnSignal.create({
+          return await tx.gmgnSignal.create({
             data: {
               id: signal.id, // 使用传入的 id
               timestamp: BigInt(signal.timestamp),
@@ -132,20 +133,19 @@ export async function storeSignals(
               },
             },
           });
+        },
+        {
+          maxWait: 5000, // 5 seconds
+          timeout: 10000, // 10 seconds
+        },
+      );
 
-          storedSignals.push(createdSignal);
-        } catch (error) {
-          console.error(`Error processing signal ${signal.id}:`, error);
-          // Optionally, you can choose to continue with the next signal
-          // or throw the error to stop the entire process
-          throw error;
-        }
-      }
-
-      return storedSignals;
-    });
-  } catch (error) {
-    console.error('Error in storeSignals:', error);
-    throw error;
+      storedSignals.push(storedSignal);
+    } catch (error) {
+      console.error(`Error processing signal ${signal.id}:`, error);
+      // Continue with the next signal instead of throwing
+    }
   }
+
+  return storedSignals;
 }
