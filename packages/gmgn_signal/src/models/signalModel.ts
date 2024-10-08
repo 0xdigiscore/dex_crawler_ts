@@ -60,6 +60,24 @@ export async function storeSignals(
               sell_tax: signal.token?.sell_tax,
             },
           });
+          const now = new Date(new Date().toUTCString());
+          await tx.tokenMetrics.create({
+            data: {
+              chain: signal.token?.chain,
+              token_address: signal.token.address,
+              timestamp: now,
+              price: signal.token.price,
+              market_cap: Number(signal.token.market_cap),
+              liquidity: Number(signal.token.liquidity),
+              volume_24h: Number(signal.token.volume),
+              holder_count: signal.token.holder_count,
+              swaps: signal.token.swaps,
+              buys: signal.token.buys,
+              sells: signal.token.sells,
+              price_change_percent: signal.token.price_change_percent,
+              price_change_percent1h: signal.token.price_change_percent1h,
+            },
+          });
 
           // 检查 previous_signals 是否存在
           let previousSignalsConnect = [];

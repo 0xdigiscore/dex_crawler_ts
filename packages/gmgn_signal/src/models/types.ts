@@ -18,6 +18,15 @@ interface TokenData {
   decimals: number;
   total_supply: number;
   name: string;
+  market_cap: string;
+  liquidity: string;
+  volume: string;
+  holder_count: number;
+  swaps: number;
+  buys: number;
+  sells: number;
+  price_change_percent: number;
+  price_change_percent1h: number;
 }
 
 export interface LinkData {
