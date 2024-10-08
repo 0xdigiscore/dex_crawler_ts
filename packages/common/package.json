@@ -1,0 +1,15 @@
+{
+  "name": "@dex_crawler/common",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@dex_crawler/prisma": "^1.0.0",
+    "@prisma/client": "^5.20.0",
+    "axios": "^1.7.7"
+  },
+  "devDependencies": {}
+}

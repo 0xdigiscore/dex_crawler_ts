@@ -1,5 +1,5 @@
-import { CrawlingContext, EnqueueStrategy } from "crawlee";
-import { Response } from "playwright";
+import { CrawlingContext, EnqueueStrategy } from 'crawlee';
+import { Response } from 'playwright';
 
 export async function oneStepEthWallets({
   request,
@@ -11,22 +11,23 @@ export async function oneStepEthWallets({
   if (response && (response as Response).ok()) {
     const jsonResponse = await (response as Response).json();
     const { data } = jsonResponse;
-    console.log(`1step eth wallets request url: ${request.url}`);
+    log.info(`1step eth wallets request url: ${request.url}`);
 
-    let addresses = data?.map((item: any) => item.address) || [];
-    if (addresses.length === 0) {
-      log.info("No addresses found in jsonResponse.data.data.rank");
-    }
+    const filteredAddresses = data
+      ?.filter((item: any) => Number(item.average_holding_time) >= 60)
+      .map((item: any) => item.address);
 
-    addresses = addresses.slice(0, 600);
-    for (const address of addresses) {
-      const newUrl = `https://gmgn.ai/defi/quotation/v1/smartmoney/eth/walletNew/${address}?period=7d`;
-
-      await enqueueLinks({
-        urls: [newUrl],
-        label: "smart/new/wallet",
-        strategy: EnqueueStrategy.All,
-      });
+    if (filteredAddresses.length === 0) {
+      log.info('No valid addresses found');
+    } else {
+      for (const address of filteredAddresses) {
+        const newUrl = `https://gmgn.ai/defi/quotation/v1/smartmoney/eth/walletNew/${address}?period=7d`;
+        await enqueueLinks({
+          urls: [newUrl],
+          label: 'smart/new/wallet',
+          strategy: EnqueueStrategy.All,
+        });
+      }
     }
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
