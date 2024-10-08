@@ -61,23 +61,28 @@ export async function storeSignals(
             },
           });
           const now = new Date(new Date().toUTCString());
-          await tx.tokenMetrics.create({
-            data: {
-              chain: signal.token?.chain,
-              token_address: signal.token.address,
-              timestamp: now,
-              price: signal.token.price,
-              market_cap: Number(signal.token.market_cap),
-              liquidity: Number(signal.token.liquidity),
-              volume_24h: Number(signal.token.volume),
-              holder_count: signal.token.holder_count,
-              swaps: signal.token.swaps,
-              buys: signal.token.buys,
-              sells: signal.token.sells,
-              price_change_percent: signal.token.price_change_percent,
-              price_change_percent1h: signal.token.price_change_percent1h,
-            },
-          });
+          try {
+            await tx.tokenMetrics.create({
+              data: {
+                chain: signal.token?.chain,
+                token_address: signal.token.address,
+                timestamp: now,
+                price: signal.token.price,
+                market_cap: Number(signal.token.market_cap),
+                liquidity: Number(signal.token.liquidity),
+                volume_24h: Number(signal.token.volume),
+                holder_count: signal.token.holder_count,
+                swaps: signal.token.swaps,
+                buys: signal.token.buys,
+                sells: signal.token.sells,
+                price_change_percent: signal.token.price_change_percent,
+                price_change_percent1h: signal.token.price_change_percent1h,
+              },
+            });
+          } catch (error) {
+            console.error('Failed to insert tokenMetrics:', error);
+            // 如果插入失败，这里不做任何特殊处理，让程序继续执行
+          }
 
           // 检查 previous_signals 是否存在
           let previousSignalsConnect = [];
