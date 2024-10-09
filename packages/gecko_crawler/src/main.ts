@@ -16,7 +16,7 @@ const updateTokenSecurityTask: Task = {
 };
 
 // 初始化任务调度器
-const taskScheduler = new TaskScheduler(1, 100); // 可根据需要调整并发和最小时间间隔
+const taskScheduler = new TaskScheduler(2, 100); // 可根据需要调整并发和最小时间间隔
 
 // 注册任务
 taskScheduler.registerTask(updateTokenMetricsTask);
