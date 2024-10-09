@@ -42,7 +42,7 @@ async function fetchTokenMetrics(
     let price: number | null = null;
     let marketCap: number | null = null;
     let volume_24h: number | null = null;
-    const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL_ADDRESS);
+    //const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL_ADDRESS);
 
     try {
       const geckoResponse = await axios.get<{
@@ -56,9 +56,9 @@ async function fetchTokenMetrics(
         };
       }>(
         `https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}`,
-        {
-          httpsAgent,
-        },
+        // {
+        //   httpsAgent,
+        // },
       );
       const tokenData = geckoResponse.data.data.attributes;
       price = parseFloat(tokenData.price_usd);
