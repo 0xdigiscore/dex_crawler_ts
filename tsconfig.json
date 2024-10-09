@@ -30,6 +30,9 @@
     },
     {
       "path": "packages/gmgn_signal"
+    },
+     {
+      "path": "packages/gecko_crawler"
     }
   ]
 }

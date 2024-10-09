@@ -41,6 +41,7 @@
     "start:dev": "dotenv -e .env -- concurrently \"yarn workspace @dex_crawler/gmgn_crawler start\" \"yarn workspace @dex_crawler/prisma generate\"",
     "start:signal": "dotenv -e .env -- yarn workspace @dex_crawler/gmgn_signal dev",
     "start:gmgn_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gmgn_crawler dev",
+    "start:gecko_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler dev",
     "build": "tsc -b",
     "test": "node test-firefox.js",
     "postinstall": "npx crawlee install-playwright-browsers",
