@@ -44,7 +44,10 @@ model Token {
   lockInfo                Json?
   creator_token_status    String?  @db.VarChar(255)
   creator_close           Boolean?
-
+  top_10_holder_rate      Decimal?
+  honeypot                Int?
+  average_tax             Decimal?
+ 
   created_at              DateTime   @default(now())
   updated_at              DateTime   @updatedAt
 
