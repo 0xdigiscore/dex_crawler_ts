@@ -5,8 +5,8 @@ import cron from 'node-cron';
 
 // 定义限速器，每分钟最多 30 个请求
 const limiter = new Bottleneck({
-  reservoir: 25, // 初始可用令牌数
-  reservoirRefreshAmount: 25, // 每次刷新添加的令牌数
+  reservoir: 60, // 初始可用令牌数
+  reservoirRefreshAmount: 60, // 每次刷新添加的令牌数
   reservoirRefreshInterval: 60 * 1000, // 刷新间隔，60秒
   maxConcurrent: 5, // 最大并发数为 5
 });
@@ -24,7 +24,14 @@ async function fetchTokenMetrics(
   try {
     // 获取 holder_count
     const holdersResponse = await axios.get<{
-      items: Array<{ token: { holders: string } }>;
+      items: Array<{
+        token: {
+          holders: string;
+          exchange_rate: string;
+          circulating_market_cap: string;
+          volume_24h: string;
+        };
+      }>;
     }>(`https://eth.blockscout.com/api/v2/tokens/${tokenAddress}/holders`);
     const holderCount =
       Number(holdersResponse.data.items[0]?.token?.holders) || 0;
@@ -56,18 +63,24 @@ async function fetchTokenMetrics(
           : parseFloat(tokenData.fdv_usd);
       volume_24h = parseFloat(tokenData.volume_usd.h24);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 429) {
+      if (axios.isAxiosError(error)) {
         console.log(
-          `GeckoTerminal API rate limit reached for token ${tokenAddress}. Using latest record from database.`,
+          `GeckoTerminal API request failed for token ${tokenAddress}. Using Blockscout data.`,
         );
+        const tokenData = holdersResponse.data.items[0]?.token;
+        price = tokenData?.exchange_rate
+          ? parseFloat(tokenData.exchange_rate)
+          : null;
+        marketCap = tokenData?.circulating_market_cap
+          ? parseFloat(tokenData.circulating_market_cap)
+          : null;
+        volume_24h = tokenData?.volume_24h
+          ? parseFloat(tokenData.volume_24h)
+          : null;
       } else {
         throw error;
       }
     }
-
-    console.log(`price: ${price}`);
-    console.log(`marketCap: ${marketCap}`);
-    console.log(`volume_24h: ${volume_24h}`);
 
     return {
       holderCount,
