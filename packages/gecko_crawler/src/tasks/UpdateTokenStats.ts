@@ -116,4 +116,4 @@ async function updateTokenStatsInDatabase(token: Token, data: TokenStatsData) {
   }
 }
 
-export default updateTokenStats;
+updateTokenStats();

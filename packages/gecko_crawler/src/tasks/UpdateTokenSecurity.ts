@@ -158,4 +158,4 @@ async function parseAndSaveTokenSecurity(data: TokenSecurityData) {
   }
 }
 
-export default updateTokenSecurity;
+updateTokenSecurity();
