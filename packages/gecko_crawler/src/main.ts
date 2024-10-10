@@ -28,9 +28,9 @@ const taskScheduler = new TaskScheduler(3, 100); // 可根据需要调整并发�
 // 注册任务
 taskScheduler.registerTask(updateTokenMetricsTask);
 taskScheduler.registerTask(updateTokenSecurityTask);
-taskScheduler.registerTask(updateTokenStatsTask);
+//taskScheduler.registerTask(updateTokenStatsTask);
 
 // 启动调度器
 taskScheduler.start();
 updateTokenSecurity();
-updateTokenStats();
+//updateTokenStats();
