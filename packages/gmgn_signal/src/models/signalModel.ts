@@ -85,23 +85,6 @@ export async function storeSignals(
             },
           });
 
-          // 检查 previous_signals 是否存在
-          let previousSignalsConnect = [];
-          if (signal.previous_signals && signal.previous_signals.length > 0) {
-            const existingPreviousSignals = await tx.gmgnSignal.findMany({
-              where: {
-                id: {
-                  in: signal.previous_signals.map((ps) => ps.id),
-                },
-              },
-              select: { id: true },
-            });
-
-            previousSignalsConnect = existingPreviousSignals.map((ps) => ({
-              id: ps.id,
-            }));
-          }
-
           // 创建新的 GmgnSignal
           return await tx.gmgnSignal.create({
             data: {
@@ -127,10 +110,6 @@ export async function storeSignals(
               link: signal.link,
               recent_buys: signal.recent_buys,
               is_first: signal.is_first,
-              // 只连接存在的 previous_signals
-              previous_signals: {
-                connect: previousSignalsConnect,
-              },
             },
           });
         },
