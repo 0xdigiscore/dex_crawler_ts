@@ -31,7 +31,6 @@ async function updateTokenStats(): Promise<void> {
     const tokens: Token[] = await prisma.token.findMany({
       where: { chain: TOKEN_CHAIN },
       orderBy: { created_at: 'desc' },
-      take: 100,
       select: {
         chain: true,
         token_address: true,

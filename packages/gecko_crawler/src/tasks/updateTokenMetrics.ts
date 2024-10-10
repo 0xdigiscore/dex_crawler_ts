@@ -1,7 +1,6 @@
 import prisma from '@dex_crawler/gmgn_crawler/src/database/prisma.js';
 import axios, { AxiosError } from 'axios';
 import Bottleneck from 'bottleneck';
-import cron from 'node-cron';
 
 // 定义限速器，每分钟最多 30 个请求
 const limiter = new Bottleneck({
@@ -157,11 +156,5 @@ async function updateTokenMetrics(): Promise<void> {
     await prisma.$disconnect();
   }
 }
-
-// 使用 cron 定时执行任务，例如每小时执行一次
-cron.schedule('0 * * * *', () => {
-  console.log('开始执行 TokenMetrics 更新任务...');
-  updateTokenMetrics();
-});
 
 export default updateTokenMetrics;
