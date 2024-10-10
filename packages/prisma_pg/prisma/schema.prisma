@@ -44,6 +44,21 @@ model Token {
   top_10_holder_rate      Decimal?       @db.Decimal
   honeypot                Int?
   average_tax             Decimal?       @db.Decimal
+  
+  top_rat_trader_count                   Int?
+  signal_count                           Int?
+  degen_call_count                       Int?
+  top_rat_trader_amount_percentage       Float?
+  top_smart_degen_count                  Int?
+  top_fresh_wallet_count                 Int?
+  top_trader_rat_trader_count            Int?
+  top_trader_rat_trader_amount_percentage Float?
+  top_trader_smart_degen_count           Int?
+  top_trader_fresh_wallet_count          Int?
+  bluechip_owner_count                   Int?
+  bluechip_owner_percentage              Float?
+
+
   gmgnSignals             GmgnSignal[]   @relation("TokenGmgnSignals")
   hot_tokens              HotToken[]
   tokenMetrics            TokenMetrics[]
