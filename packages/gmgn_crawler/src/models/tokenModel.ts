@@ -50,6 +50,7 @@ async function parseAndSaveHotTokens(data: any[]) {
             buy_tax: token.buy_tax,
             sell_tax: token.sell_tax,
             pool_creation_timestamp: token.pool_creation_timestamp,
+            deploy_time: token.open_timestamp,
             //@ts-ignore
             lockInfo: token.lockInfo,
           },
@@ -67,6 +68,7 @@ async function parseAndSaveHotTokens(data: any[]) {
             creator_token_status: token.creator_token_status,
             hot_level: token.hot_level,
             call_number: token.call_number,
+            deploy_time: token.open_timestamp,
 
             renounced: token.renounced,
             twitter_username: token.twitter_username,
