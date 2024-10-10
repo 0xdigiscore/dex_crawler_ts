@@ -2,7 +2,6 @@ import prisma from '@dex_crawler/gmgn_crawler/src/database/prisma.js';
 import axios, { AxiosError } from 'axios';
 import Bottleneck from 'bottleneck';
 import cron from 'node-cron';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 
 // 定义限速器，每分钟最多 30 个请求
 const limiter = new Bottleneck({
@@ -135,6 +134,7 @@ async function updateTokenMetrics(): Promise<void> {
               dataToInsert.price = latestRecord.price;
               dataToInsert.market_cap = latestRecord.market_cap;
               dataToInsert.volume_24h = latestRecord.volume_24h;
+              dataToInsert.holder_count = metrics.holderCount;
             }
           }
 

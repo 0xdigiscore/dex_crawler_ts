@@ -47,7 +47,8 @@
     "postinstall": "npx crawlee install-playwright-browsers",
     "bootstrap": "lerna bootstrap",
     "prisma:generate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma generate",
-    "prisma:migrate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma migrate"
+    "prisma:migrate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma migrate",
+    "prisma:pull": "dotenv -e .env -- yarn workspace @dex_crawler/prisma pull"
   },
   "author": "It's not you it's me",
   "license": "ISC"

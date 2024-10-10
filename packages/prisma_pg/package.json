@@ -6,6 +6,7 @@
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
+    "pull": "prisma db pull",
     "build": "tsc -b"
   },
   "dependencies": {
