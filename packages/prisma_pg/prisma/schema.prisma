@@ -286,8 +286,6 @@ model GmgnSignal {
   token_symbol      String?         @db.VarChar(255)
   ExecutedSignal    ExecutedSignal?
   token             Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
-  GmgnSignal_A      GmgnSignal[]    @relation("GmgnSignalPreviousSignals")
-  GmgnSignal_B      GmgnSignal[]    @relation("GmgnSignalPreviousSignals")
 
   @@index([chain, token_address])
 }
