@@ -27,7 +27,7 @@ model Token {
   sell_tax                Decimal?
   created_at              DateTime       @default(now())
   updated_at              DateTime       @updatedAt
-  deploy_time             DateTime?
+  deploy_time             BigInt?
   can_mint                Boolean?
   has_renounced_ownership Boolean?
   top_pools               String?
