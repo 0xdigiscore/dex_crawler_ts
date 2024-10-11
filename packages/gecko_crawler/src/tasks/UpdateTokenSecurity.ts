@@ -72,19 +72,21 @@ async function updateTokenSecurity(): Promise<void> {
       };
     });
 
-    // const proxyConfiguration = new ProxyConfiguration({
-    //   proxyUrls: [process.env.PROXY_URL_ADDRESS],
-    // });
+    const proxyConfiguration = new ProxyConfiguration({
+      proxyUrls: [process.env.PROXY_URL],
+    });
 
     // 初始化 PlaywrightCrawler
     const crawler = new PlaywrightCrawler({
-      //proxyConfiguration,
-      requestHandlerTimeoutSecs: 30, // 根据需要调整超时时间
+      useSessionPool: true,
+      persistCookiesPerSession: true,
+      proxyConfiguration,
+      requestHandlerTimeoutSecs: 180, // 根据需要调整超时时间
       maxConcurrency: 6, // 设置合适的并发数
       launchContext: {
         launcher: firefox,
         launchOptions: {
-          headless: true,
+          ignoreHTTPSErrors: true, // 忽略 https 证书错误
         },
       },
       requestHandler: async ({ request, page, log }) => {
