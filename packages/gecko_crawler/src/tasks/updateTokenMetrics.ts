@@ -1,13 +1,14 @@
 import prisma from '@dex_crawler/gmgn_crawler/src/database/prisma.js';
 import axios, { AxiosError } from 'axios';
 import Bottleneck from 'bottleneck';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 // 定义限速器，每分钟最多 30 个请求
 const limiter = new Bottleneck({
-  reservoir: 10, // 初始可用令牌数
-  reservoirRefreshAmount: 10, // 每次刷新添加的令牌数
-  reservoirRefreshInterval: 1000, // 刷新间隔，1秒
-  maxConcurrent: 10, // 最大并发数为 10
+  reservoir: 90, // 初始可用令牌数
+  reservoirRefreshAmount: 90, // 每次刷新添加的令牌数
+  reservoirRefreshInterval: 60000, // 刷新间隔，60秒（1分钟）
+  maxConcurrent: 20, // 最大并发数为 30
 });
 
 interface TokenMetrics {
@@ -40,7 +41,7 @@ async function fetchTokenMetrics(
     let price: number | null = null;
     let marketCap: number | null = null;
     let volume_24h: number | null = null;
-    //const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL_ADDRESS);
+    const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL);
 
     try {
       const geckoResponse = await axios.get<{
@@ -54,9 +55,9 @@ async function fetchTokenMetrics(
         };
       }>(
         `https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}`,
-        // {
-        //   httpsAgent,
-        // },
+        {
+          httpsAgent,
+        },
       );
       const tokenData = geckoResponse.data.data.attributes;
       price = parseFloat(tokenData.price_usd);
