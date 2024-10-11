@@ -5,10 +5,10 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 
 // 定义限速器，每分钟最多 30 个请求
 const limiter = new Bottleneck({
-  reservoir: 90, // 初始可用令牌数
-  reservoirRefreshAmount: 90, // 每次刷新添加的令牌数
+  reservoir: 60, // 初始可用令牌数
+  reservoirRefreshAmount: 60, // 每次刷新添加的令牌数
   reservoirRefreshInterval: 60000, // 刷新间隔，60秒（1分钟）
-  maxConcurrent: 20, // 最大并发数为 30
+  maxConcurrent: 10, // 最大并发数为 30
 });
 
 interface TokenMetrics {
