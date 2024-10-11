@@ -3,12 +3,15 @@ import { router } from '@/routes.js';
 import { firefox } from 'playwright';
 import { crawlerGmgnUrlConfigs } from './const/crawlerUrls.js';
 
-// const proxyConfiguration = new ProxyConfiguration({
-//   proxyUrls: [process.env.PROXY_URL as string],
-// });
+const proxyConfiguration = new ProxyConfiguration({
+  proxyUrls: [process.env.PROXY_URL],
+});
 
 async function main() {
   const crawler = new PlaywrightCrawler({
+    useSessionPool: true,
+    persistCookiesPerSession: true,
+    proxyConfiguration,
     requestHandler: router,
     // Unified Cookies Management and Rate Limiting
     sessionPoolOptions: {
@@ -19,6 +22,9 @@ async function main() {
       // If launcher option is not specified here,
       // default Chromium browser will be used.
       launcher: firefox,
+      launchOptions: {
+        ignoreHTTPSErrors: true, // 忽略 https 证书错误
+      },
     },
     maxRequestsPerCrawl: 5000,
     maxRequestRetries: 10,
