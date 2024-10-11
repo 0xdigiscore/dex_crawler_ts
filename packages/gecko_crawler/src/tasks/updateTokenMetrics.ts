@@ -18,6 +18,8 @@ interface TokenMetrics {
   volume_24h: number | null;
 }
 
+const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL);
+
 async function fetchTokenMetrics(
   tokenAddress: string,
 ): Promise<TokenMetrics | null> {
@@ -32,7 +34,9 @@ async function fetchTokenMetrics(
           volume_24h: string;
         };
       }>;
-    }>(`https://eth.blockscout.com/api/v2/tokens/${tokenAddress}/holders`);
+    }>(`https://eth.blockscout.com/api/v2/tokens/${tokenAddress}/holders`, {
+      httpsAgent,
+    });
     const holderCount =
       Number(holdersResponse.data.items[0]?.token?.holders) || 0;
 
@@ -41,7 +45,6 @@ async function fetchTokenMetrics(
     let price: number | null = null;
     let marketCap: number | null = null;
     let volume_24h: number | null = null;
-    const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL);
 
     try {
       const geckoResponse = await axios.get<{
