@@ -1,6 +1,6 @@
 import { PlaywrightCrawler, ProxyConfiguration } from 'crawlee';
 import { router } from '@/routes.js';
-import { firefox } from 'playwright';
+import { firefox, chromium } from 'playwright';
 import { crawlerGmgnUrlConfigs } from '@/const/crawlerUrls.js';
 
 // const proxyConfiguration = new ProxyConfiguration({
