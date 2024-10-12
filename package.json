@@ -44,6 +44,7 @@
     "start:gecko_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler dev",
     "start:token_stats_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler start:token_stats",
     "start:token_security_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler start:token_security",
+    "start:token_topbuys": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler start:token_topbuys",
     "build": "tsc -b",
     "test": "node test-firefox.js",
     "postinstall": "npx crawlee install-playwright-browsers",

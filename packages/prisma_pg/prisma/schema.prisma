@@ -63,8 +63,36 @@ model Token {
   hot_tokens              HotToken[]
   tokenMetrics            TokenMetrics[]
   top_traders             TopTrader[]
-
+  top_buys                TopBuys[]
   @@unique([chain, token_address])
+  @@index([chain])
+  @@index([token_address])
+}
+
+model TopBuys {
+  id                       Int      @id @default(autoincrement())
+  chain                    String   @db.VarChar(255)
+  token_address            String   @db.VarChar(255)
+  holder_count_70          Int
+  hold                     Int
+  bought_more              Int
+  sold_part                Int
+  sold                     Int
+  transferred              Int
+  bought_rate              Decimal  @db.Decimal(65, 30)
+  holding_rate             Decimal  @db.Decimal(65, 30)
+  smart_pos                Json?
+  smart_count_hold         Int?
+  smart_count_bought_more  Int?
+  smart_count_sold_part    Int?
+  smart_count_sold         Int?
+  smart_count_transferred  Int?
+  top_10_holder_rate       Decimal  @db.Decimal(65, 30)
+  token                    Token    @relation(fields: [chain, token_address], references: [chain, token_address])
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+  
+  @@unique([chain, token_address], name: "topBuysCompositeUnique")
   @@index([chain])
   @@index([token_address])
 }

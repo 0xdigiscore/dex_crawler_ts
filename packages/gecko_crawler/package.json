@@ -8,6 +8,7 @@
     "start": "node dist/main.js",
     "start:token_stats": "tsx src/tasks/UpdateTokenStats.ts",
     "start:token_security": "tsx src/tasks/UpdateTokenSecurity.ts",
+    "start:token_topbuys": "tsx src/tasks/updateTokenTopBuys.ts",
     "dev": "tsx src/main.ts"
   },
   "dependencies": {
