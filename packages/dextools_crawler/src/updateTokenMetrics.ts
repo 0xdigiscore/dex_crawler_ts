@@ -161,6 +161,7 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
         liquidity: metrics.liquidity,
         volume_24h: metrics.volume_24h,
         holder_count: metrics.holder_count,
+        holdersUpdatedAt: metrics.holdersUpdatedAt,
         swaps: metrics.swaps,
         buys: metrics.buys,
         sells: metrics.sells,
@@ -176,6 +177,10 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
         transactions_24h_sells: metrics.transactions_24h_sells,
         smart_buy_24h: metrics.smart_buy_24h,
         smart_sell_24h: metrics.smart_sell_24h,
+        pair_address: metrics.pair_address,
+        tx_count: metrics.tx_count,
+        initial_liquidity: metrics.initial_liquidity,
+        reserve: metrics.reserve,
       },
     });
   } catch (error) {

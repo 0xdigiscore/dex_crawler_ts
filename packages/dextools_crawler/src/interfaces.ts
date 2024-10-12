@@ -94,4 +94,10 @@ export interface TokenMetrics {
   smart_buy_24h?: number;
   smart_sell_24h?: number;
   created_at?: Date;
+  pair_address?: string;
+  tx_count?: number;
+  holdersUpdatedAt?: Date;
+  initial_liquidity?: number;
+  initial_liquidity_updated_at?: Date;
+  reserve?: number;
 }
