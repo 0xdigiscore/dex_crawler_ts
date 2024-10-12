@@ -31,8 +31,11 @@
     {
       "path": "packages/gmgn_signal"
     },
-     {
+    {
       "path": "packages/gecko_crawler"
+    },
+    {
+      "path": "packages/dextools_crawler"
     }
   ]
 }

@@ -65,5 +65,5 @@ async function crawl(url) {
 
 // Example usage
 const targetUrl =
-  'https://www.dextools.io/shared/exchanges?allowUnknowns=false&chain=ether';
+  'https://www.dextools.io/shared/search/pair?query=0x52c77b0cb827afbad022e6d6caf2c44452edbc39&strict=true';
 crawl(targetUrl);

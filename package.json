@@ -45,6 +45,7 @@
     "start:gmgn_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gmgn_crawler dev",
     "start:gecko_scheduler": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler start:gecko_scheduler",
     "start:stats_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/gecko_crawler start:stats_crawler",
+    "start:dextools_crawler": "dotenv -e .env -- yarn workspace @dex_crawler/dextools_crawler dev",
     "build": "tsc -b",
     "test": "node test-firefox.js",
     "postinstall": "npx crawlee install-playwright-browsers",

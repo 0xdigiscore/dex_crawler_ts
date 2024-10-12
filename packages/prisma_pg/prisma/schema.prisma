@@ -101,6 +101,7 @@ model TokenMetrics {
   id                      Int      @id @default(autoincrement())
   chain                   String   @db.VarChar(255)
   token_address           String   @db.VarChar(255)
+  pair_address            String?  @db.VarChar(255)
   timestamp               DateTime
   price                   Float?
   market_cap              Float?
@@ -108,6 +109,7 @@ model TokenMetrics {
   liquidity               Float?
   volume_24h              Float?
   holder_count            Int?
+  holdersUpdatedAt        DateTime?
   swaps                   Int?
   buys                    Int?
   sells                   Int?
@@ -123,6 +125,12 @@ model TokenMetrics {
   transactions_24h_sells  Int?
   smart_buy_24h           Int?
   smart_sell_24h          Int?
+  initial_liquidity       Float?  
+  liquidityUpdatedAt      DateTime?
+  reserve                 Float?
+  reserveUpdatedAt        DateTime?
+  tx_count                Int?
+
   created_at              DateTime @default(now())
   token                   Token    @relation(fields: [chain, token_address], references: [chain, token_address])
 
