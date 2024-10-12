@@ -7,6 +7,7 @@
     "build": "tsc -b",
     "start": "node dist/main.js",
     "start:stats_crawler": "tsx src/main.ts",
+    "start:gecko_scheduler": "tsx src/scheduler.ts",
     "dev": "tsx src/main.ts"
   },
   "dependencies": {
