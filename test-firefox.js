@@ -39,15 +39,14 @@ async function crawl(url) {
           // headers['cookie'] =
           //   '_pk_id.1.b299=0d25cfa6382dd480.1726470163.; _pk_id.5.b299=f15b42d2e098f51f.1726470163.; _ga=GA1.1.743784403.1727445584; _ga_9DZQT74D25=GS1.1.1728465231.4.0.1728465234.0.0.0; cf_clearance=.7BfY.f7Y24bqnE4nnQ44byqhk2EoJcckg5ke8z_5D8-1728728174-1.2.1.1-6IP6M05.kcx432gJ_Z30lQ6vjIMrnX7m1JVqDlbFQ7itb8kLK6C.ZavP_WcdPXP3.r.OppUJMqN0NUnC2mchuTEuNsvpLqGeXHFgiMiM.61qxEjdG1.xrO6b.3NJTz6dZCscRylm5h_NRvwRbN2iJVOJ9ToY2p1zlDipRz1tOGHrKx8Kf2VLCpAsHcZMdK_MnScrEusfRScKabI1XNEOCCTERywSLOpu6J3gaWW_ZpTHp57RTuXOtcDeG.XExVrwYcIMmgKhDgWzqjFqEJExcVrebGt.vdAGH_coP4.zEGPFK1K7QmkrTPY95cQ_8xgAQ8MwW4x0rtXByvIoTCjhDu5oVLQiF1N0wsT7Wvi5ENkZN.M2Bx.Tw3K6xnC_83TS1BUqcaoaCpm0t..JA7nwYw; _pk_ses.1.b299=1; _pk_ses.5.b299=1; __cf_bm=8CGnZTaXLYt0Akm0uITcWVw5rgJ0xeaNJH1OxctQBj4-1728728488-1.0.1.1-f0MgmXduDnaRALWh_W29dR0ZPETvhqhylWetl3JIofkKVKDGttYVkyznMRXUmfB11bIHS6mFIih4jEu5qGB5og';
           // headers['priority'] = 'u=1, i';
-          headers['referer'] =
-            'https://www.dextools.io/app/en/ether/pair-explorer/0x318ba85ca49a3b12d3cf9c72cc72b29316971802?t=1728728494446';
+          headers['referer'] = 'https://www.dextools.io';
           // headers['sec-ch-ua'] =
           //   '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"';
           // headers['sec-ch-ua-mobile'] = '?0';
           // headers['sec-ch-ua-platform'] = '"macOS"';
-          headers['sec-fetch-dest'] = 'empty';
-          headers['sec-fetch-mode'] = 'cors';
-          headers['sec-fetch-site'] = 'same-origin';
+          // headers['sec-fetch-dest'] = 'empty';
+          // headers['sec-fetch-mode'] = 'cors';
+          // headers['sec-fetch-site'] = 'same-origin';
           // headers['user-agent'] =
           //   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36';
 
@@ -84,5 +83,5 @@ async function crawl(url) {
 
 // Example usage
 const targetUrl =
-  'https://www.dextools.io/shared/exchanges?allowUnknowns=false&chain=ether';
+  'https://www.dextools.io/shared/search/pair?query=0x52c77b0cb827afbad022e6d6caf2c44452edbc39&strict=true';
 crawl(targetUrl);
