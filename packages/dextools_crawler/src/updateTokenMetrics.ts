@@ -123,11 +123,11 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
     transactions_24h_buys: periodStats['24h']?.swaps?.buys || 0,
     transactions_24h_sells: periodStats['24h']?.swaps?.sells || 0,
     holder_count: result.token?.metrics?.holders || 0,
-    // @ts-ignore
-    tx_count: metrics.txCount,
+    //@ts-ignore
+    tx_count: result.token?.metrics?.txCount || 0,
 
     holdersUpdatedAt: result.token?.metrics?.holdersUpdatedAt,
-    market_cap: result.token?.metrics?.marketCap || 0,
+    market_cap: result.token?.metrics?.fdv || 0,
     fully_diluted_valuation: result.token?.metrics?.fdv || 0,
 
     pair_address: result.id.pair,

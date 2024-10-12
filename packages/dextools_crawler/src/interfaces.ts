@@ -38,8 +38,8 @@ export interface DextoolsResult {
     metrics: {
       holders: number;
       fdv: number;
-      marketCap?: number;
       holdersUpdatedAt: Date;
+      txCount: number;
     };
   };
 }
