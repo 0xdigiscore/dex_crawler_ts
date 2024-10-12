@@ -128,7 +128,6 @@ model TokenMetrics {
   initial_liquidity       Float?  
   liquidityUpdatedAt      DateTime?
   reserve                 Float?
-  reserveUpdatedAt        DateTime?
   tx_count                Int?
 
   created_at              DateTime @default(now())

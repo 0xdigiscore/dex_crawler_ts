@@ -78,6 +78,7 @@ async function updateTokenMetrics(): Promise<void> {
           if (jsonData.results && jsonData.results.length > 0) {
             const result = jsonData.results[0];
             const tokenMetrics = parseTokenMetrics(token, result);
+            console.log(tokenMetrics);
             await updateTokenMetricsInDatabase(tokenMetrics);
             log.info(`Token ${token.token_address} metrics updated.`);
           } else {
@@ -112,7 +113,7 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
     price: price,
     liquidity: metrics.liquidity,
     swaps: metrics.txCount,
-    volume_24h: result.volume,
+    volume_24h: periodStats['24h']?.volume?.total || 0,
     buys: periodStats['24h']?.swaps?.buys || 0,
     sells: periodStats['24h']?.swaps?.sells || 0,
     price_change_1h: periodStats['1h']?.price?.usd?.diff || 0,
@@ -129,11 +130,10 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
     market_cap: result.token?.metrics?.marketCap || 0,
     fully_diluted_valuation: result.token?.metrics?.fdv || 0,
 
-    pair_address: result.id.pairAddress,
+    pair_address: result.id.pair,
     initial_liquidity: result.metrics.initialLiquidity,
     initial_liquidity_updated_at: result.metrics.initialLiquidityUpdatedAt,
     reserve: result.metrics.reserve,
-    reserve_updated_at: result.metrics.reserveUpdatedAt,
   };
 
   return tokenMetrics;

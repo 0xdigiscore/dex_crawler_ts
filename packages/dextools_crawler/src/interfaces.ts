@@ -19,7 +19,7 @@ export interface DextoolsResult {
   volume: number;
   swaps: number;
   id: {
-    pairAddress: string;
+    pair: string;
   };
   metrics: {
     liquidity: number;
