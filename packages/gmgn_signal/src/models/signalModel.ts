@@ -58,20 +58,22 @@ export async function storeSignals(
             },
           });
           const now = new Date(new Date().toUTCString());
+          // Add this line to get the current timestamp in seconds
+          const currentTimestampInSeconds = Math.floor(now.getTime() / 1000);
 
           await tx.tokenMetrics.upsert({
             where: {
               chain_token_address_timestamp: {
                 chain: signal.token?.chain,
                 token_address: signal.token.address,
-                timestamp: now,
+                timestamp: currentTimestampInSeconds,
               },
             },
             update: {}, // If it exists, don't update anything
             create: {
               chain: signal.token?.chain,
               token_address: signal.token.address,
-              timestamp: now,
+              timestamp: currentTimestampInSeconds,
               price: signal.token.price,
               market_cap: Number(signal.token.market_cap),
               liquidity: Number(signal.token.liquidity),
