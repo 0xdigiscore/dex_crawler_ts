@@ -102,7 +102,7 @@ model TokenMetrics {
   chain                   String   @db.VarChar(255)
   token_address           String   @db.VarChar(255)
   pair_address            String?  @db.VarChar(255)
-  timestamp               DateTime
+  timestamp               BigInt?
   price                   Float?
   market_cap              Float?
   fully_diluted_valuation Float?
@@ -266,7 +266,7 @@ model WalletActivity {
   wallet_address        String       @db.VarChar(255)
   chain                 String       @db.VarChar(255)
   tx_hash               String       @db.VarChar(255)
-  timestamp             Int
+  timestamp             BigInt?
   event_type            String       @db.VarChar(255)
   token_address         String       @db.VarChar(255)
   token                 Json?
@@ -303,7 +303,7 @@ model GmgnSignal {
   token_address     String          @db.VarChar(255)
   chain             String          @db.VarChar(255)
   token_price       Decimal?
-  from_timestamp    Int?
+  from_timestamp    BigInt?
   updated_at        Decimal?
   buy_duration      Int?
   buy_usd           Decimal?

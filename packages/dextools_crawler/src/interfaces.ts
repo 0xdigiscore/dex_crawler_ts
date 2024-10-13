@@ -17,6 +17,8 @@ export interface DextoolsResponse {
 export interface DextoolsResult {
   price: number;
   volume: number;
+  price_timestamp: Date;
+  creationTime: Date;
   swaps: number;
   id: {
     pair: string;
@@ -71,7 +73,8 @@ export interface PeriodStats {
 export interface TokenMetrics {
   chain: string;
   token_address: string;
-  timestamp: Date;
+  timestamp?: BigInt;
+  token_deploy_timestamp?: BigInt;
   price?: number;
   market_cap?: number;
   fully_diluted_valuation?: number;

@@ -105,11 +105,20 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
   const metrics = result.metrics;
   const periodStats = result.periodStats;
   const price = result.price;
+  const timestamp = result.price_timestamp
+    ? Math.floor(new Date(result.price_timestamp).getTime() / 1000)
+    : Math.floor(Date.now() / 1000);
+
+  const token_deploy_timestamp = Math.floor(
+    new Date(result.creationTime).getTime() / 1000,
+  );
 
   const tokenMetrics: TokenMetrics = {
     chain: token.chain,
     token_address: token.token_address,
-    timestamp: new Date(),
+    //@ts-ignore
+    timestamp: BigInt(timestamp),
+    token_deploy_timestamp: BigInt(token_deploy_timestamp),
     price: price,
     liquidity: metrics.liquidity,
     swaps: metrics.txCount,
@@ -147,6 +156,7 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
         chain_token_address_timestamp: {
           chain: metrics.chain,
           token_address: metrics.token_address,
+          //@ts-ignore
           timestamp: metrics.timestamp,
         },
       },
@@ -154,6 +164,7 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
       create: {
         chain: metrics.chain,
         token_address: metrics.token_address,
+        //@ts-ignore
         timestamp: metrics.timestamp,
         price: metrics.price,
         market_cap: metrics.market_cap,
@@ -181,6 +192,20 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
         tx_count: metrics.tx_count,
         initial_liquidity: metrics.initial_liquidity,
         reserve: metrics.reserve,
+      },
+    });
+    // Update Token deploy_time
+    await prisma.token.update({
+      where: {
+        chain_token_address: {
+          chain: metrics.chain,
+          token_address: metrics.token_address,
+        },
+      },
+      data: {
+        deploy_time: metrics.token_deploy_timestamp
+          ? BigInt(metrics.token_deploy_timestamp.toString())
+          : null,
       },
     });
   } catch (error) {
