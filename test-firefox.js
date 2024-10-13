@@ -65,5 +65,5 @@ async function crawl(url) {
 
 // Example usage
 const targetUrl =
-  'https://www.dextools.io/shared/search/pair?query=0x52c77b0cb827afbad022e6d6caf2c44452edbc39&strict=true';
+  'https://www.dextools.io/shared/search/pair?query=0x594daad7d77592a2b97b725a7ad59d7e188b5bfa&strict=true';
 crawl(targetUrl);

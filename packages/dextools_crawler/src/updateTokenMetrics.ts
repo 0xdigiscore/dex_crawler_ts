@@ -109,9 +109,9 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
     ? Math.floor(new Date(result.price_timestamp).getTime() / 1000)
     : Math.floor(Date.now() / 1000);
 
-  const token_deploy_timestamp = Math.floor(
-    new Date(result.creationTime).getTime() / 1000,
-  );
+  const token_deploy_timestamp = result.creationTime
+    ? Math.floor(new Date(result.creationTime).getTime() / 1000)
+    : null;
 
   const tokenMetrics: TokenMetrics = {
     chain: token.chain,
@@ -156,16 +156,14 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
         chain_token_address_timestamp: {
           chain: metrics.chain,
           token_address: metrics.token_address,
-          //@ts-ignore
-          timestamp: metrics.timestamp,
+          timestamp: BigInt(metrics.timestamp.toString()),
         },
       },
       update: {},
       create: {
         chain: metrics.chain,
         token_address: metrics.token_address,
-        //@ts-ignore
-        timestamp: metrics.timestamp,
+        timestamp: BigInt(metrics.timestamp.toString()),
         price: metrics.price,
         market_cap: metrics.market_cap,
         fully_diluted_valuation: metrics.fully_diluted_valuation,
@@ -194,6 +192,7 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
         reserve: metrics.reserve,
       },
     });
+
     // Update Token deploy_time
     await prisma.token.update({
       where: {
