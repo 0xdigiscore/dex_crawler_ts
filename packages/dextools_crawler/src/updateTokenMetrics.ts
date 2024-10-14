@@ -201,7 +201,6 @@ function parseTokenSecurity(
     chain: token.chain,
     token_address: token.token_address,
     is_contract_renounced: parseYesNoUnknown(dextools.is_contract_renounced),
-
     is_open_source: parseYesNoUnknown(dextools.is_open_source),
     is_honeypot: parseYesNoUnknown(dextools.is_honeypot),
     is_mintable: parseYesNoUnknown(dextools.is_mintable),
@@ -209,12 +208,26 @@ function parseTokenSecurity(
     slippage_modifiable: parseYesNoUnknown(dextools.slippage_modifiable),
     is_blacklisted: parseYesNoUnknown(dextools.is_blacklisted),
     transfer_pausable: parseYesNoUnknown(dextools.transfer_pausable),
-    buy_tax: dextools.buy_tax?.status || null,
-    sell_tax: dextools.sell_tax?.status || null,
+    buy_tax: parseTax(dextools.buy_tax),
+    sell_tax: parseTax(dextools.sell_tax),
   };
   console.log(tokenSecurityData);
 
   return tokenSecurityData;
+}
+
+function parseTax(taxData: {
+  min?: string;
+  max?: string;
+  status?: string;
+}): string | null {
+  if (taxData.min !== undefined) {
+    return taxData.min;
+  }
+  if (taxData.max !== undefined) {
+    return taxData.max;
+  }
+  return null;
 }
 
 // Function to update the TokenMetrics in the database
