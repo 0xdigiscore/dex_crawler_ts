@@ -6,6 +6,7 @@ import {
   DextoolsResponse,
   DextoolsResult,
   TokenMetrics,
+  TokenSecurityData,
 } from '@/interfaces.js';
 
 // Main function to update token metrics
@@ -13,7 +14,7 @@ async function updateTokenMetrics(): Promise<void> {
   try {
     // Fetch tokens from the database
     const tokens: Token[] = await prisma.token.findMany({
-      where: { chain: 'eth' },
+      //where: { chain: 'eth' },
       orderBy: { created_at: 'desc' },
       select: {
         chain: true,
@@ -81,6 +82,10 @@ async function updateTokenMetrics(): Promise<void> {
             console.log(tokenMetrics);
             await updateTokenMetricsInDatabase(tokenMetrics);
             log.info(`Token ${token.token_address} metrics updated.`);
+            if (token.chain == 'sol') {
+              const tokenSecurity = parseTokenSecurity(token, result);
+              await updateTokenSecurityInDatabase(tokenSecurity);
+            }
           } else {
             log.error(`No results found for token ${token.token_address}`);
           }
@@ -148,6 +153,47 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
   return tokenMetrics;
 }
 
+// Function to convert 'yes', 'no', 'unknown' to integers
+function parseYesNoUnknown(value: string): number | null {
+  if (value === 'yes') return 1;
+  if (value === 'no') return 0;
+  return null;
+}
+
+// Function to parse Token Security Data and map to database schema
+function parseTokenSecurity(
+  token: Token,
+  result: DextoolsResult,
+): TokenSecurityData | null {
+  const auditData = result.token?.audit;
+  if (!auditData) {
+    return null;
+  }
+
+  const { dextools } = auditData;
+  if (!dextools) {
+    return null;
+  }
+
+  const tokenSecurityData: TokenSecurityData = {
+    chain: token.chain,
+    token_address: token.token_address,
+    is_contract_renounced: parseYesNoUnknown(dextools.is_contract_renounced),
+
+    is_open_source: parseYesNoUnknown(dextools.is_open_source),
+    is_honeypot: parseYesNoUnknown(dextools.is_honeypot),
+    is_mintable: parseYesNoUnknown(dextools.is_mintable),
+    is_proxy: parseYesNoUnknown(dextools.is_proxy),
+    slippage_modifiable: parseYesNoUnknown(dextools.slippage_modifiable),
+    is_blacklisted: parseYesNoUnknown(dextools.is_blacklisted),
+    transfer_pausable: parseYesNoUnknown(dextools.transfer_pausable),
+    buy_tax: dextools.buy_tax?.status || null,
+    sell_tax: dextools.sell_tax?.status || null,
+  };
+
+  return tokenSecurityData;
+}
+
 // Function to update the TokenMetrics in the database
 async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
   try {
@@ -209,6 +255,115 @@ async function updateTokenMetricsInDatabase(metrics: TokenMetrics) {
     });
   } catch (error) {
     console.error('Error updating token metrics in the database:', error);
+    throw error;
+  }
+}
+
+async function updateTokenSecurityInDatabase(
+  securityData: TokenSecurityData,
+): Promise<void> {
+  try {
+    await prisma.tokenSecurity.upsert({
+      where: {
+        chain_token_address: {
+          chain: securityData.chain,
+          token_address: securityData.token_address,
+        },
+      },
+      create: {
+        token: {
+          connect: {
+            chain_token_address: {
+              chain: securityData.chain,
+              token_address: securityData.token_address,
+            },
+          },
+        },
+        anti_whale_modifiable: securityData.anti_whale_modifiable,
+        buy_tax: securityData.buy_tax,
+        can_take_back_ownership: securityData.can_take_back_ownership,
+        cannot_buy: securityData.cannot_buy,
+        cannot_sell_all: securityData.cannot_sell_all,
+        creator_address: securityData.creator_address,
+        creator_balance: securityData.creator_balance,
+        creator_percent: securityData.creator_percent,
+        external_call: securityData.external_call,
+
+        is_anti_whale: securityData.is_anti_whale,
+        is_blacklisted: securityData.is_blacklisted,
+        is_honeypot: securityData.is_honeypot,
+        is_in_dex: securityData.is_in_dex,
+        is_mintable: securityData.is_mintable,
+        is_open_source: securityData.is_open_source,
+        is_proxy: securityData.is_proxy,
+        is_whitelisted: securityData.is_whitelisted,
+        lp_holder_count: securityData.lp_holder_count,
+        lp_total_supply: securityData.lp_total_supply,
+        note: securityData.note,
+        other_potential_risks: securityData.other_potential_risks,
+        owner_address: securityData.owner_address,
+        owner_balance: securityData.owner_balance,
+        owner_change_balance: securityData.owner_change_balance,
+        owner_percent: securityData.owner_percent,
+        selfdestruct: securityData.selfdestruct,
+        sell_tax: securityData.sell_tax,
+        token_name: securityData.token_name,
+        token_symbol: securityData.token_symbol,
+        total_supply: securityData.total_supply,
+        trading_cooldown: securityData.trading_cooldown,
+        transfer_pausable: securityData.transfer_pausable,
+        trust_list: securityData.trust_list,
+        hidden_owner: securityData.hidden_owner,
+        updated_at: new Date(),
+      },
+      update: {
+        anti_whale_modifiable: securityData.anti_whale_modifiable,
+        buy_tax: securityData.buy_tax,
+        can_take_back_ownership: securityData.can_take_back_ownership,
+        cannot_buy: securityData.cannot_buy,
+        cannot_sell_all: securityData.cannot_sell_all,
+        creator_address: securityData.creator_address,
+        creator_balance: securityData.creator_balance,
+        creator_percent: securityData.creator_percent,
+        external_call: securityData.external_call,
+
+        is_anti_whale: securityData.is_anti_whale,
+        is_blacklisted: securityData.is_blacklisted,
+        is_honeypot: securityData.is_honeypot,
+        is_in_dex: securityData.is_in_dex,
+        is_mintable: securityData.is_mintable,
+        is_open_source: securityData.is_open_source,
+        is_proxy: securityData.is_proxy,
+        is_whitelisted: securityData.is_whitelisted,
+        lp_holder_count: securityData.lp_holder_count,
+        lp_total_supply: securityData.lp_total_supply,
+        note: securityData.note,
+        other_potential_risks: securityData.other_potential_risks,
+        owner_address: securityData.owner_address,
+        owner_balance: securityData.owner_balance,
+        owner_change_balance: securityData.owner_change_balance,
+        owner_percent: securityData.owner_percent,
+        selfdestruct: securityData.selfdestruct,
+        sell_tax: securityData.sell_tax,
+        token_name: securityData.token_name,
+        token_symbol: securityData.token_symbol,
+        total_supply: securityData.total_supply,
+        trading_cooldown: securityData.trading_cooldown,
+        transfer_pausable: securityData.transfer_pausable,
+        trust_list: securityData.trust_list,
+        hidden_owner: securityData.hidden_owner,
+        updated_at: new Date(),
+      },
+    });
+
+    console.log(
+      `Token security data for ${securityData.token_address} on ${securityData.chain} updated/created successfully.`,
+    );
+  } catch (error) {
+    console.error(
+      `Error updating/creating token security data for ${securityData.token_address} on ${securityData.chain}:`,
+      error,
+    );
     throw error;
   }
 }

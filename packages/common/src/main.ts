@@ -1,5 +1,5 @@
-import { getProxies } from './proxy/proxy_manage.js';
+async function main() {
+  console.log('Hello, world!');
+}
 
-getProxies()
-  .then((proxyUrl) => console.log(`Obtained random proxy: ${proxyUrl}`))
-  .catch((error) => console.error('Failed to get proxy:', error));
+main().catch(console.error);
