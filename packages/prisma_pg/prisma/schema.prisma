@@ -114,6 +114,8 @@ model TokenSecurity {
   is_true_token                Int?
   trust_list                   String?
   hidden_owner                 Int?
+  created_at                   DateTime @default(now())
+  updated_at                   DateTime? 
 
   token                        Token     @relation("TokenTokenSecurity", fields: [chain, token_address], references: [chain, token_address])
 
