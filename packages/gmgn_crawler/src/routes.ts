@@ -19,7 +19,7 @@ router.addHandler('rank/eth/swaps', rankEthTokens);
 router.addHandler('rank/sol/swaps', rankSolTokens);
 router.addHandler('rank/eth/wallets', rankEthWallets);
 router.addHandler('rank/sol/wallets', rankSolWallets);
-router.addHandler('top/token/traders', topTokenTraders);
+//router.addHandler('top/token/traders', topTokenTraders);
 router.addHandler('1step/eth/wallets', oneStepEthWallets);
 router.addHandler('smart/new/wallet', smartEthWalletNew);
 router.addHandler('smart/wallet/activity', smartWalletActivity);
