@@ -182,6 +182,8 @@ async function updateTokenSecurity(): Promise<void> {
               // @ts-ignore
               is_true_token: Number(securityData.is_true_token),
               trust_list: securityData.trust_list,
+              // @ts-ignore
+              updated_at: new Date(),
             },
             create: {
               chain: token.chain,
@@ -247,6 +249,8 @@ async function updateTokenSecurity(): Promise<void> {
               //@ts-ignore
               is_true_token: Number(securityData.is_true_token),
               trust_list: securityData.trust_list,
+              // @ts-ignore
+              updated_at: new Date(),
             },
           });
 
