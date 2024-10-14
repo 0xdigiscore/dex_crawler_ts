@@ -16,7 +16,7 @@ router.addDefaultHandler(async ({ page, request }) => {
   console.log(`Title: ${title}`);
 });
 router.addHandler('rank/eth/swaps', rankEthTokens);
-router.addHandler('rank/sol/swaps', rankSolTokens);
+//router.addHandler('rank/sol/swaps', rankSolTokens);
 router.addHandler('rank/eth/wallets', rankEthWallets);
 router.addHandler('rank/sol/wallets', rankSolWallets);
 //router.addHandler('top/token/traders', topTokenTraders);
