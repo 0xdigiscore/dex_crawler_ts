@@ -64,6 +64,59 @@ model Token {
   tokenMetrics            TokenMetrics[]
   top_traders             TopTrader[]
   top_buys                TopBuys[]
+  tokenSecurity           TokenSecurity? @relation("TokenTokenSecurity")
+
+  @@unique([chain, token_address])
+  @@index([chain])
+  @@index([token_address])
+}
+
+model TokenSecurity {
+  id                           Int       @id @default(autoincrement())
+  chain                        String    @db.VarChar(255)
+  token_address                String    @db.VarChar(255)
+  anti_whale_modifiable        Int?
+  buy_tax                      String?
+  can_take_back_ownership      Int?
+  cannot_buy                   Int?
+  cannot_sell_all              Int?
+  creator_address              String?
+  creator_balance              String?
+  creator_percent              String?
+  external_call                String?
+  honeypot_with_same_creator   Int?
+  is_airdrop_scam              Int?
+  is_anti_whale                Int?
+  is_blacklisted               Int?
+  is_honeypot                  Int?
+  is_in_dex                    Int?
+  is_mintable                  Int?
+  is_open_source               Int?
+  is_proxy                     Int?
+  is_whitelisted               Int?
+  lp_holder_count              Int?
+  lp_total_supply              String?
+  note                         String?
+  other_potential_risks        String?
+  owner_address                String?
+  owner_balance                String?
+  owner_change_balance         String?
+  owner_percent                String?
+  personal_slippage_modifiable String?
+  selfdestruct                 String?
+  sell_tax                     String?
+  slippage_modifiable          String?
+  token_name                   String?
+  token_symbol                 String?
+  total_supply                 String?
+  trading_cooldown             String?
+  transfer_pausable            Int?
+  is_true_token                Int?
+  trust_list                   String?
+  hidden_owner                 Int?
+
+  token                        Token     @relation("TokenTokenSecurity", fields: [chain, token_address], references: [chain, token_address])
+
   @@unique([chain, token_address])
   @@index([chain])
   @@index([token_address])
