@@ -6,7 +6,7 @@ interface CrawlerUrlConfig extends RequestOptions {
 
 export const crawlerGmgnUrlConfigs: CrawlerUrlConfig[] = [
   {
-    url: 'https://gmgn.ai/defi/quotation/v1/signals?size=20',
+    url: 'https://gmgn.ai/defi/quotation/v1/signals?size=10',
     label: 'gmgn/signals',
     datasetName: 'gmgn_signals',
   },

@@ -12,96 +12,118 @@ import {
 // Main function to update token metrics
 async function updateTokenMetrics(): Promise<void> {
   try {
-    // Fetch tokens from the database
-    const tokens: Token[] = await prisma.token.findMany({
-      //where: { chain: 'eth' },
-      orderBy: { created_at: 'desc' },
-      select: {
-        chain: true,
-        token_address: true,
-        created_at: true,
-      },
-    });
-    console.log(`Found ${tokens.length} tokens in the database.`);
+    const tokens = await fetchTokensFromDatabase();
+    const requests = buildRequestList(tokens);
+    const crawler = initializeCrawler();
 
-    // Build request list
-    const requests = tokens.map((token) => ({
-      url: `https://www.dextools.io/shared/search/pair?query=${token.token_address}&strict=true`,
-      userData: { token },
-    }));
-    const proxyConfiguration = new ProxyConfiguration({
-      proxyUrls: [process.env.PROXY_URL],
-    });
-
-    // Initialize PlaywrightCrawler
-    const crawler = new PlaywrightCrawler({
-      requestHandlerTimeoutSecs: 180,
-      maxConcurrency: 6,
-      proxyConfiguration,
-      launchContext: {
-        launcher: chromium,
-        launchOptions: {
-          headless: true,
-          args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        },
-      },
-      // Use preNavigationHooks to modify headers before navigation
-      preNavigationHooks: [
-        async ({ page, request, log }, gotoOptions) => {
-          // Set up request interception
-          await page.route('**', (route) => {
-            const headers = {
-              ...route.request().headers(),
-              accept: 'application/json',
-              'accept-encoding': 'gzip, deflate, br, zstd',
-              'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-              referer: 'https://www.dextools.io',
-
-              'sec-fetch-dest': 'empty',
-              'sec-fetch-mode': 'cors',
-              'sec-fetch-site': 'same-origin',
-            };
-
-            // Continue the request with modified headers
-            route.continue({ headers });
-          });
-        },
-      ],
-      requestHandler: async ({ request, page, log }) => {
-        const { token } = request.userData as { token: Token };
-        try {
-          await page.goto(request.url);
-          const responseText = await page.evaluate(
-            () => document.body.innerText,
-          );
-          const jsonData: DextoolsResponse = JSON.parse(responseText);
-
-          if (jsonData.results && jsonData.results.length > 0) {
-            const result = jsonData.results[0];
-            const tokenMetrics = parseTokenMetrics(token, result);
-            console.log(tokenMetrics);
-            await updateTokenMetricsInDatabase(tokenMetrics);
-            log.info(`Token ${token.token_address} metrics updated.`);
-            if (token.chain == 'sol') {
-              const tokenSecurity = parseTokenSecurity(token, result);
-              await updateTokenSecurityInDatabase(tokenSecurity);
-            }
-          } else {
-            log.error(`No results found for token ${token.token_address}`);
-          }
-        } catch (error) {
-          log.error(`Error processing token ${token.token_address}: ${error}`);
-        }
-      },
-    });
-
-    // Start crawling
     await crawler.run(requests);
     console.log('All token metrics updated.');
   } catch (error) {
     console.error('Error updating token metrics:', error);
   } finally {
     await prisma.$disconnect();
+  }
+}
+
+// Helper functions
+async function fetchTokensFromDatabase(): Promise<Token[]> {
+  // Fetch tokens from the database
+  const tokens: Token[] = await prisma.token.findMany({
+    //where: { chain: 'eth' },
+    orderBy: { created_at: 'desc' },
+    select: {
+      chain: true,
+      token_address: true,
+      created_at: true,
+    },
+  });
+  console.log(`Found ${tokens.length} tokens in the database.`);
+  return tokens;
+}
+
+function buildRequestList(tokens: Token[]): any[] {
+  // Build request list
+  return tokens.map((token) => ({
+    url: `https://www.dextools.io/shared/search/pair?query=${token.token_address}&strict=true`,
+    userData: { token },
+  }));
+}
+
+function initializeCrawler(): PlaywrightCrawler {
+  const proxyConfiguration = new ProxyConfiguration({
+    proxyUrls: [process.env.PROXY_URL],
+  });
+
+  return new PlaywrightCrawler({
+    requestHandlerTimeoutSecs: 180,
+    maxConcurrency: 6,
+    proxyConfiguration,
+    launchContext: {
+      launcher: chromium,
+      launchOptions: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      },
+    },
+    preNavigationHooks: [setupRequestInterception],
+    requestHandler: handleRequest,
+  });
+}
+
+async function setupRequestInterception({ page }) {
+  // Set up request interception
+  await page.route('**', (route) => {
+    const headers = {
+      ...route.request().headers(),
+      accept: 'application/json',
+      'accept-encoding': 'gzip, deflate, br, zstd',
+      'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      referer: 'https://www.dextools.io',
+
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
+    };
+
+    // Continue the request with modified headers
+    route.continue({ headers });
+  });
+}
+
+async function handleRequest({ request, page, log }) {
+  const { token } = request.userData as { token: Token };
+  try {
+    const jsonData = await fetchDextoolsData(page, request.url);
+    if (jsonData.results && jsonData.results.length > 0) {
+      await processTokenData(token, jsonData.results[0], log);
+    } else {
+      log.error(`No results found for token ${token.token_address}`);
+    }
+  } catch (error) {
+    log.error(`Error processing token ${token.token_address}: ${error}`);
+  }
+}
+
+async function fetchDextoolsData(page, url): Promise<DextoolsResponse> {
+  await page.goto(url);
+  const responseText = await page.evaluate(() => document.body.innerText);
+  return JSON.parse(responseText);
+}
+
+async function processTokenData(
+  token: Token,
+  result: DextoolsResult,
+  log: any,
+) {
+  const tokenMetrics = parseTokenMetrics(token, result);
+  await updateTokenMetricsInDatabase(tokenMetrics);
+  log.info(`Token ${token.token_address} metrics updated.`);
+
+  if (token.chain === 'sol') {
+    const tokenSecurity = parseTokenSecurity(token, result);
+    if (tokenSecurity) {
+      await updateTokenSecurityInDatabase(tokenSecurity);
+    }
   }
 }
 
@@ -190,6 +212,7 @@ function parseTokenSecurity(
     buy_tax: dextools.buy_tax?.status || null,
     sell_tax: dextools.sell_tax?.status || null,
   };
+  console.log(tokenSecurityData);
 
   return tokenSecurityData;
 }
