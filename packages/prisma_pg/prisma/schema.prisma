@@ -114,6 +114,11 @@ model TokenSecurity {
   is_true_token                Int?
   trust_list                   String?
   hidden_owner                 Int?
+
+  lock_info_rate          Decimal?
+  holder_count            Int?
+  top_10_holder_rate      Decimal?
+
   created_at                   DateTime @default(now())
   updated_at                   DateTime? 
 

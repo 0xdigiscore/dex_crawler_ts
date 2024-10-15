@@ -22,7 +22,7 @@ interface TokenSecurityData {
   creator_percent: string;
   external_call: string;
   hidden_owner: string;
-  holder_count: string;
+
   honeypot_with_same_creator: string;
   is_anti_whale: string;
   is_blacklisted: string;
@@ -52,6 +52,11 @@ interface TokenSecurityData {
   note?: string | null; // Optional
   other_potential_risks?: string | null; // Optional
   trust_list?: string | null; // Optional
+  holder_count?: number | null; // Optional
+  lockInfo?: number | null; // Optional
+  top_10_holder_rate?: number | null; // Optional
+  holders?: any[] | null; // Optional
+  lp_holders?: any[] | null; // Optional
 }
 
 const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL);
@@ -113,6 +118,59 @@ async function updateTokenSecurity(): Promise<void> {
       limiter.schedule(async () => {
         const securityData = await fetchTokenSecurity(token.token_address);
         if (securityData) {
+          // 计算 lockInfo（锁仓流动性占比）
+          let lockInfoPercentage = 0;
+          try {
+            const lpHolders = securityData.lp_holders || [];
+            const lockedLpBalances = lpHolders
+              .filter((holder) => holder.is_locked === 1)
+              .map((holder) => parseFloat(holder.balance));
+            const totalLockedLpBalance = lockedLpBalances.reduce(
+              (sum, balance) => sum + balance,
+              0,
+            );
+            const lpTotalSupply = parseFloat(
+              securityData.lp_total_supply || '0',
+            );
+            if (lpTotalSupply > 0) {
+              lockInfoPercentage = (totalLockedLpBalance / lpTotalSupply) * 100;
+            }
+          } catch (error) {
+            console.error(
+              `计算 lockInfo 时出错，地址: ${token.token_address}`,
+              error,
+            );
+          }
+
+          // 计算 top_10_holder_rate（除去标签为 UniswapV2 的前 10 持仓占比之和）
+          let top10HolderRate = 0;
+          try {
+            const holders = securityData.holders || [];
+            let filteredHolders = holders.filter(
+              (holder) => holder.tag !== 'UniswapV2',
+            );
+            filteredHolders = holders.filter(
+              (holder) => holder.tag !== 'UniswapV3',
+            );
+            const sortedHolders = filteredHolders.sort(
+              (a, b) => parseFloat(b.balance) - parseFloat(a.balance),
+            );
+            const top10Holders = sortedHolders.slice(0, 10);
+            const top10Percentages = top10Holders.map((holder) =>
+              parseFloat(holder.percent),
+            );
+            top10HolderRate = top10Percentages.reduce(
+              (sum, percent) => sum + percent,
+              0,
+            );
+          } catch (error) {
+            console.error(
+              `计算 top_10_holder_rate 时出错，地址: ${token.token_address}`,
+              error,
+            );
+          }
+
+          // 更新数据库
           await prisma.tokenSecurity.upsert({
             where: {
               chain_token_address: {
@@ -121,45 +179,30 @@ async function updateTokenSecurity(): Promise<void> {
               },
             },
             update: {
-              // @ts-ignore
               anti_whale_modifiable: Number(securityData.anti_whale_modifiable),
               buy_tax: securityData.buy_tax,
-              // @ts-ignore
               can_take_back_ownership: Number(
                 securityData.can_take_back_ownership,
               ),
-              // @ts-ignore
               cannot_buy: Number(securityData.cannot_buy),
-              // @ts-ignore
               cannot_sell_all: Number(securityData.cannot_sell_all),
               creator_address: securityData.creator_address,
               creator_balance: securityData.creator_balance,
               creator_percent: securityData.creator_percent,
               external_call: securityData.external_call,
               hidden_owner: Number(securityData.hidden_owner),
-              // @ts-ignore
               honeypot_with_same_creator: Number(
                 securityData.honeypot_with_same_creator,
               ),
-              // @ts-ignore
               is_airdrop_scam: Number(securityData.is_airdrop_scam),
-              // @ts-ignore
               is_anti_whale: Number(securityData.is_anti_whale),
-              // @ts-ignore
               is_blacklisted: Number(securityData.is_blacklisted),
-              // @ts-ignore
               is_honeypot: Number(securityData.is_honeypot),
-              // @ts-ignore
               is_in_dex: Number(securityData.is_in_dex),
-              // @ts-ignore
               is_mintable: Number(securityData.is_mintable),
-              // @ts-ignore
               is_open_source: Number(securityData.is_open_source),
-              // @ts-ignore
               is_proxy: Number(securityData.is_proxy),
-              // @ts-ignore
               is_whitelisted: Number(securityData.is_whitelisted),
-              // @ts-ignore
               lp_holder_count: Number(securityData.lp_holder_count),
               lp_total_supply: securityData.lp_total_supply,
               note: securityData.note,
@@ -177,56 +220,44 @@ async function updateTokenSecurity(): Promise<void> {
               token_symbol: securityData.token_symbol,
               total_supply: securityData.total_supply,
               trading_cooldown: securityData.trading_cooldown,
-              //@ts-ignore
+
               transfer_pausable: Number(securityData.transfer_pausable),
-              // @ts-ignore
+
               is_true_token: Number(securityData.is_true_token),
               trust_list: securityData.trust_list,
               // @ts-ignore
+              holder_count: securityData.holder_count,
+              lock_info_rate: lockInfoPercentage,
+              top_10_holder_rate: top10HolderRate,
               updated_at: new Date(),
             },
             create: {
               chain: token.chain,
               token_address: token.token_address,
-              //@ts-ignore
               anti_whale_modifiable: Number(securityData.anti_whale_modifiable),
               buy_tax: securityData.buy_tax,
-              //@ts-ignore
               can_take_back_ownership: Number(
                 securityData.can_take_back_ownership,
               ),
-              //@ts-ignore
               cannot_buy: Number(securityData.cannot_buy),
-              //@ts-ignore
               cannot_sell_all: Number(securityData.cannot_sell_all),
               creator_address: securityData.creator_address,
               creator_balance: securityData.creator_balance,
               creator_percent: securityData.creator_percent,
               external_call: securityData.external_call,
               hidden_owner: Number(securityData.hidden_owner),
-              // @ts-ignore
               honeypot_with_same_creator: Number(
                 securityData.honeypot_with_same_creator,
               ),
-              // @ts-ignore
               is_airdrop_scam: Number(securityData.is_airdrop_scam),
-              // @ts-ignore
               is_anti_whale: Number(securityData.is_anti_whale),
-              // @ts-ignore
               is_blacklisted: Number(securityData.is_blacklisted),
-              // @ts-ignore
               is_honeypot: Number(securityData.is_honeypot),
-              // @ts-ignore
               is_in_dex: Number(securityData.is_in_dex),
-              // @ts-ignore
               is_mintable: Number(securityData.is_mintable),
-              // @ts-ignore
               is_open_source: Number(securityData.is_open_source),
-              // @ts-ignore
               is_proxy: Number(securityData.is_proxy),
-              // @ts-ignore
               is_whitelisted: Number(securityData.is_whitelisted),
-              // @ts-ignore
               lp_holder_count: Number(securityData.lp_holder_count),
               lp_total_supply: securityData.lp_total_supply,
               note: securityData.note,
@@ -244,12 +275,13 @@ async function updateTokenSecurity(): Promise<void> {
               token_symbol: securityData.token_symbol,
               total_supply: securityData.total_supply,
               trading_cooldown: securityData.trading_cooldown,
-              //@ts-ignore
               transfer_pausable: Number(securityData.transfer_pausable),
-              //@ts-ignore
               is_true_token: Number(securityData.is_true_token),
               trust_list: securityData.trust_list,
               // @ts-ignore
+              holder_count: securityData.holder_count,
+              lock_info_rate: lockInfoPercentage,
+              top_10_holder_rate: top10HolderRate,
               updated_at: new Date(),
             },
           });
