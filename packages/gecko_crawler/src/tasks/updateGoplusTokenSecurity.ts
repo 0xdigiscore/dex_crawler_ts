@@ -5,10 +5,10 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 
 // 定义限速器，每分钟最多 60 个请求
 const limiter = new Bottleneck({
-  reservoir: 60, // 初始可用令牌数
-  reservoirRefreshAmount: 60, // 每次刷新添加的令牌数
+  reservoir: 180, // 初始可用令牌数
+  reservoirRefreshAmount: 180, // 每次刷新添加的令牌数
   reservoirRefreshInterval: 60000, // 刷新间隔，60秒（1分钟）
-  maxConcurrent: 3, // 最大并发数为 10
+  maxConcurrent: 10, // 最大并发数为 10
 });
 
 interface TokenSecurityData {
@@ -146,11 +146,10 @@ async function updateTokenSecurity(): Promise<void> {
           let top10HolderRate = 0;
           try {
             const holders = securityData.holders || [];
-            let filteredHolders = holders.filter(
-              (holder) => holder.tag !== 'UniswapV2',
-            );
-            filteredHolders = holders.filter(
-              (holder) => holder.tag !== 'UniswapV3',
+            // 过滤掉标签为 UniswapV2 和 UniswapV3 的持有人
+            const filteredHolders = holders.filter(
+              (holder) =>
+                holder.tag !== 'UniswapV2' && holder.tag !== 'UniswapV3',
             );
             const sortedHolders = filteredHolders.sort(
               (a, b) => parseFloat(b.balance) - parseFloat(a.balance),
@@ -226,9 +225,9 @@ async function updateTokenSecurity(): Promise<void> {
               is_true_token: Number(securityData.is_true_token),
               trust_list: securityData.trust_list,
               // @ts-ignore
-              holder_count: securityData.holder_count,
-              lock_info_rate: lockInfoPercentage,
-              top_10_holder_rate: top10HolderRate,
+              holder_count: Number(securityData.holder_count),
+              lock_info_rate: Number(lockInfoPercentage),
+              top_10_holder_rate: Number(top10HolderRate),
               updated_at: new Date(),
             },
             create: {
@@ -279,9 +278,9 @@ async function updateTokenSecurity(): Promise<void> {
               is_true_token: Number(securityData.is_true_token),
               trust_list: securityData.trust_list,
               // @ts-ignore
-              holder_count: securityData.holder_count,
-              lock_info_rate: lockInfoPercentage,
-              top_10_holder_rate: top10HolderRate,
+              holder_count: Number(securityData.holder_count),
+              lock_info_rate: Number(lockInfoPercentage),
+              top_10_holder_rate: Number(top10HolderRate),
               updated_at: new Date(),
             },
           });
