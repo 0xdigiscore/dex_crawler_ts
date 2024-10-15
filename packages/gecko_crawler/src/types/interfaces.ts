@@ -6,47 +6,6 @@ export interface Token {
   created_at?: Date;
 }
 
-export interface TokenSecurityData {
-  address: string;
-  is_show_alert: boolean;
-  is_open_source: boolean;
-  open_source: number;
-  is_blacklist: boolean;
-  blacklist: number;
-  is_honeypot: number | null;
-  honeypot: number;
-  is_renounced: boolean;
-  renounced: number;
-  can_sell: number;
-  can_not_sell: number;
-  buy_tax: string;
-  sell_tax: string;
-  average_tax: string;
-  high_tax: string;
-  flags: any[];
-  lock_info: Array<{
-    NFT_list: any | null;
-    address: string;
-    balance: string;
-    is_locked: number;
-    locked_detail: any | null;
-    percent: string;
-    tag?: string;
-  }>;
-  top_10_holder_rate: string;
-  lock_summary: {
-    is_locked: boolean;
-    lock_detail: Array<{
-      percent: string;
-      pool: string;
-      is_blackhole: boolean;
-    }>;
-    lock_tags: string[];
-    lock_percent: string;
-    left_lock_percent: string;
-  };
-}
-
 export interface TokenStatsData {
   signal_count: number;
   degen_call_count: number;

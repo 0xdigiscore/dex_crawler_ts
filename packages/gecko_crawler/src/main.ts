@@ -6,13 +6,12 @@ import prisma from '@dex_crawler/gmgn_crawler/src/database/prisma.js';
 import {
   Token,
   RequestType,
-  TokenSecurityData,
   TokenStatsData,
   HolderData,
 } from '@/types/interfaces.js';
 import { fetchTokenData } from '@/helper/dataFetchers.js';
 import {
-  updateTokenSecurityDataInDatabase,
+  //updateTokenSecurityDataInDatabase,
   updateTokenStatsInDatabase,
   updateTopBuysInDatabase,
 } from '@/database/index.js';
@@ -68,14 +67,6 @@ async function updateTokensData(): Promise<void> {
           const data = await fetchTokenData(page);
 
           switch (type) {
-            case 'security':
-              await updateTokenSecurityDataInDatabase(
-                data as TokenSecurityData,
-              );
-              console.log(
-                `Token ${token.token_address} security data updated.`,
-              );
-              break;
             case 'stats':
               await updateTokenStatsInDatabase(token, data as TokenStatsData);
               console.log(`Token ${token.token_address} stats updated.`);
@@ -119,10 +110,6 @@ function buildRequests(tokens: Token[]) {
   const topBuysRequests = [];
 
   tokens.forEach((token) => {
-    securityRequests.push({
-      url: `${BASE_URLS.security}/${TOKEN_CHAIN}/${token.token_address}`,
-      userData: { token, type: 'security' },
-    });
     statsRequests.push({
       url: `${BASE_URLS.stats}/${TOKEN_CHAIN}/${token.token_address}`,
       userData: { token, type: 'stats' },
