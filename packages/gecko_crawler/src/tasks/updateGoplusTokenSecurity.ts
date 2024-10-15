@@ -154,7 +154,7 @@ async function updateTokenSecurity(): Promise<void> {
             const sortedHolders = filteredHolders.sort(
               (a, b) => parseFloat(b.balance) - parseFloat(a.balance),
             );
-            const top10Holders = sortedHolders.slice(0, 10);
+            const top10Holders = sortedHolders;
             const top10Percentages = top10Holders.map((holder) =>
               parseFloat(holder.percent),
             );
