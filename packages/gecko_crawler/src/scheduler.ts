@@ -4,7 +4,7 @@ import updateTokenSecurity from './tasks/updateGoplusTokenSecurity.js';
 // 定义任务
 const updateTokenSecurityTask: Task = {
   name: '更新 Token 指标',
-  schedule: '*/1 * * * *', // 每2分钟执行一次
+  schedule: '*/1 * * * *', // 每1分钟执行一次
   taskFunction: updateTokenSecurity,
 };
 
