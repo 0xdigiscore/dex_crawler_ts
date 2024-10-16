@@ -6,6 +6,7 @@
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
+    "format": "prisma format",
     "pull": "prisma db pull",
     "build": "tsc -b"
   },

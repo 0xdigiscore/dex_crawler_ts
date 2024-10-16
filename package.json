@@ -52,7 +52,8 @@
     "bootstrap": "lerna bootstrap",
     "prisma:generate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma generate",
     "prisma:migrate": "dotenv -e .env -- yarn workspace @dex_crawler/prisma migrate",
-    "prisma:pull": "dotenv -e .env -- yarn workspace @dex_crawler/prisma pull"
+    "prisma:pull": "dotenv -e .env -- yarn workspace @dex_crawler/prisma pull",
+    "prisma:format": "dotenv -e .env -- yarn workspace @dex_crawler/prisma format"
   },
   "author": "It's not you it's me",
   "license": "ISC"
