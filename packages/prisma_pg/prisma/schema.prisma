@@ -358,6 +358,8 @@ model WalletActivity {
 model GmgnSignal {
   id                Int             @id @unique
   timestamp         BigInt
+  source            String          @default("gmgn_web") @db.VarChar(255)
+
   maker             String?
   token_address     String          @db.VarChar(255)
   chain             String          @db.VarChar(255)
@@ -379,6 +381,7 @@ model GmgnSignal {
   created_at        DateTime        @default(now())
   token_symbol      String?         @db.VarChar(255)
   ExecutedSignal    ExecutedSignal?
+  raw_data          Json?
   token             Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
   UserOrder         UserOrder[]
 
