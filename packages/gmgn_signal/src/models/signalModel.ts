@@ -19,12 +19,13 @@ export async function storeSignals(
 
           // 检查信号是否已存在
           const existingSignal = await tx.gmgnSignal.findUnique({
-            where: { id: signal.id },
+            //@ts-ignore
+            where: { signal_id: signal.id },
           });
 
           if (existingSignal) {
             console.log(
-              `Signal with id ${signal.id} already exists. Skipping.`,
+              `Signal with signal_id ${signal.id} already exists. Skipping.`,
             );
             return existingSignal;
           }
@@ -90,7 +91,8 @@ export async function storeSignals(
           // 创建新的 GmgnSignal
           return await tx.gmgnSignal.create({
             data: {
-              id: signal.id, // 使用传入的 id
+              //@ts-ignore
+              signal_id: signal.id, // 使用传入的 id
               timestamp: BigInt(signal.timestamp),
               maker: signal.maker,
               token_address: signal.token_address,

@@ -118,7 +118,7 @@ model TokenSecurity {
   lock_info_rate     Decimal? @db.Decimal(10, 2)
   top_10_holder_rate Decimal? @db.Decimal(10, 2)
   holder_count       Int?
-  
+
   created_at DateTime  @default(now())
   updated_at DateTime?
 
@@ -357,10 +357,10 @@ model WalletActivity {
 }
 
 model GmgnSignal {
-  id        Int    @id @unique
-  timestamp BigInt
-  source    String @default("gmgn_web") @db.VarChar(255)
-
+  id                Int             @id @default(autoincrement())
+  timestamp         BigInt
+  source            String          @default("gmgn_web") @db.VarChar(255)
+  signal_id         Int?            @unique
   maker             String?
   token_address     String          @db.VarChar(255)
   chain             String          @db.VarChar(255)
@@ -386,6 +386,7 @@ model GmgnSignal {
   token             Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
   UserOrder         UserOrder[]
 
+  @@index([source, chain, token_address])
   @@index([chain, token_address])
 }
 
