@@ -92,6 +92,7 @@ model TokenSecurity {
   is_mintable                  Int?
   is_open_source               Int?
   is_proxy                     Int?
+  is_burn                      Int?
   is_whitelisted               Int?
   lp_holder_count              Int?
   lp_total_supply              String?
