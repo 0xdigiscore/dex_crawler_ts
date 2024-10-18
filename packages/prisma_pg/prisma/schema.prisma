@@ -114,10 +114,10 @@ model TokenSecurity {
   trust_list                   String?
   hidden_owner                 Int?
 
-  lock_info_rate     Decimal?
+  lock_info_rate     Decimal? @db.Decimal(10, 2)
+  top_10_holder_rate Decimal? @db.Decimal(10, 2)
   holder_count       Int?
-  top_10_holder_rate Decimal?
-
+  
   created_at DateTime  @default(now())
   updated_at DateTime?
 
@@ -356,9 +356,9 @@ model WalletActivity {
 }
 
 model GmgnSignal {
-  id                Int             @id @unique
-  timestamp         BigInt
-  source            String          @default("gmgn_web") @db.VarChar(255)
+  id        Int    @id @unique
+  timestamp BigInt
+  source    String @default("gmgn_web") @db.VarChar(255)
 
   maker             String?
   token_address     String          @db.VarChar(255)
@@ -411,9 +411,13 @@ model UserOrder {
   enter_price   Decimal?
   holder_count  Int?
 
-  user_name      String?    @db.VarChar(255)
+  user_name      String? @db.VarChar(255)
   order_metadata Json?
-  GmgnSignal     GmgnSignal @relation(fields: [signal_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  created_at DateTime? @default(now())
+  updated_at DateTime  @updatedAt
+
+  GmgnSignal GmgnSignal @relation(fields: [signal_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([user_id, chain, token_address], map: "uq_user_order_chain")
 }

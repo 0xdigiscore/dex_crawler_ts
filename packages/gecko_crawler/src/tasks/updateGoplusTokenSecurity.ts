@@ -1,4 +1,5 @@
 import prisma from '@dex_crawler/gmgn_crawler/src/database/prisma.js';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import Bottleneck from 'bottleneck';
 import { HttpsProxyAgent } from 'https-proxy-agent';
@@ -60,6 +61,17 @@ interface TokenSecurityData {
 }
 
 const httpsAgent = new HttpsProxyAgent(process.env.PROXY_URL);
+
+// Safe parsing functions
+function safeParseInt(value: any): number | null {
+  const num = parseInt(value, 10);
+  return isFinite(num) ? num : null;
+}
+
+function safeParseFloat(value: any): number | null {
+  const num = parseFloat(value);
+  return isFinite(num) ? num : null;
+}
 
 /**
  * 获取 TokenSecurity 数据
@@ -124,15 +136,14 @@ async function updateTokenSecurity(): Promise<void> {
             const lpHolders = securityData.lp_holders || [];
             const lockedLpBalances = lpHolders
               .filter((holder) => holder.is_locked === 1)
-              .map((holder) => parseFloat(holder.balance));
+              .map((holder) => safeParseFloat(holder.balance) || 0);
             const totalLockedLpBalance = lockedLpBalances.reduce(
               (sum, balance) => sum + balance,
               0,
             );
-            const lpTotalSupply = parseFloat(
-              securityData.lp_total_supply || '0',
-            );
-            if (lpTotalSupply > 0) {
+            const lpTotalSupply =
+              safeParseFloat(securityData.lp_total_supply) || 0;
+            if (lpTotalSupply > 0 && totalLockedLpBalance >= 0) {
               lockInfoPercentage = (totalLockedLpBalance / lpTotalSupply) * 100;
             }
           } catch (error) {
@@ -140,23 +151,32 @@ async function updateTokenSecurity(): Promise<void> {
               `计算 lockInfo 时出错，地址: ${token.token_address}`,
               error,
             );
+            lockInfoPercentage = null;
+          }
+
+          // Validate lockInfoPercentage
+          if (
+            !isFinite(lockInfoPercentage) ||
+            lockInfoPercentage > 100 ||
+            lockInfoPercentage < 0
+          ) {
+            lockInfoPercentage = null;
           }
 
           // 计算 top_10_holder_rate（除去标签为 UniswapV2 的前 10 持仓占比之和）
           let top10HolderRate = 0;
           try {
             const holders = securityData.holders || [];
-            // 过滤掉标签为 UniswapV2 和 UniswapV3 的持有人
             const filteredHolders = holders.filter(
               (holder) =>
                 holder.tag !== 'UniswapV2' && holder.tag !== 'UniswapV3',
             );
             const sortedHolders = filteredHolders.sort(
-              (a, b) => parseFloat(b.balance) - parseFloat(a.balance),
+              (a, b) => safeParseFloat(b.balance) - safeParseFloat(a.balance),
             );
-            const top10Holders = sortedHolders;
-            const top10Percentages = top10Holders.map((holder) =>
-              parseFloat(holder.percent),
+            const top10Holders = sortedHolders.slice(0, 10);
+            const top10Percentages = top10Holders.map(
+              (holder) => safeParseFloat(holder.percent) || 0,
             );
             top10HolderRate = top10Percentages.reduce(
               (sum, percent) => sum + percent,
@@ -167,6 +187,16 @@ async function updateTokenSecurity(): Promise<void> {
               `计算 top_10_holder_rate 时出错，地址: ${token.token_address}`,
               error,
             );
+            top10HolderRate = null;
+          }
+
+          // Validate top10HolderRate
+          if (
+            !isFinite(top10HolderRate) ||
+            top10HolderRate > 100 ||
+            top10HolderRate < 0
+          ) {
+            top10HolderRate = null;
           }
 
           // 更新数据库
@@ -178,31 +208,33 @@ async function updateTokenSecurity(): Promise<void> {
               },
             },
             update: {
-              anti_whale_modifiable: Number(securityData.anti_whale_modifiable),
+              anti_whale_modifiable: safeParseInt(
+                securityData.anti_whale_modifiable,
+              ),
               buy_tax: securityData.buy_tax,
-              can_take_back_ownership: Number(
+              can_take_back_ownership: safeParseInt(
                 securityData.can_take_back_ownership,
               ),
-              cannot_buy: Number(securityData.cannot_buy),
-              cannot_sell_all: Number(securityData.cannot_sell_all),
+              cannot_buy: safeParseInt(securityData.cannot_buy),
+              cannot_sell_all: safeParseInt(securityData.cannot_sell_all),
               creator_address: securityData.creator_address,
               creator_balance: securityData.creator_balance,
               creator_percent: securityData.creator_percent,
               external_call: securityData.external_call,
-              hidden_owner: Number(securityData.hidden_owner),
-              honeypot_with_same_creator: Number(
+              hidden_owner: safeParseInt(securityData.hidden_owner),
+              honeypot_with_same_creator: safeParseInt(
                 securityData.honeypot_with_same_creator,
               ),
-              is_airdrop_scam: Number(securityData.is_airdrop_scam),
-              is_anti_whale: Number(securityData.is_anti_whale),
-              is_blacklisted: Number(securityData.is_blacklisted),
-              is_honeypot: Number(securityData.is_honeypot),
-              is_in_dex: Number(securityData.is_in_dex),
-              is_mintable: Number(securityData.is_mintable),
-              is_open_source: Number(securityData.is_open_source),
-              is_proxy: Number(securityData.is_proxy),
-              is_whitelisted: Number(securityData.is_whitelisted),
-              lp_holder_count: Number(securityData.lp_holder_count),
+              is_airdrop_scam: safeParseInt(securityData.is_airdrop_scam),
+              is_anti_whale: safeParseInt(securityData.is_anti_whale),
+              is_blacklisted: safeParseInt(securityData.is_blacklisted),
+              is_honeypot: safeParseInt(securityData.is_honeypot),
+              is_in_dex: safeParseInt(securityData.is_in_dex),
+              is_mintable: safeParseInt(securityData.is_mintable),
+              is_open_source: safeParseInt(securityData.is_open_source),
+              is_proxy: safeParseInt(securityData.is_proxy),
+              is_whitelisted: safeParseInt(securityData.is_whitelisted),
+              lp_holder_count: safeParseInt(securityData.lp_holder_count),
               lp_total_supply: securityData.lp_total_supply,
               note: securityData.note,
               other_potential_risks: securityData.other_potential_risks,
@@ -219,45 +251,50 @@ async function updateTokenSecurity(): Promise<void> {
               token_symbol: securityData.token_symbol,
               total_supply: securityData.total_supply,
               trading_cooldown: securityData.trading_cooldown,
-
-              transfer_pausable: Number(securityData.transfer_pausable),
-
-              is_true_token: Number(securityData.is_true_token),
+              transfer_pausable: safeParseInt(securityData.transfer_pausable),
+              is_true_token: safeParseInt(securityData.is_true_token),
               trust_list: securityData.trust_list,
-              // @ts-ignore
-              holder_count: Number(securityData.holder_count),
-              lock_info_rate: Number(lockInfoPercentage),
-              top_10_holder_rate: Number(top10HolderRate),
+              holder_count: safeParseInt(securityData.holder_count),
+              lock_info_rate:
+                lockInfoPercentage !== null
+                  ? new Prisma.Decimal(lockInfoPercentage.toFixed(2))
+                  : null,
+              top_10_holder_rate:
+                top10HolderRate !== null
+                  ? new Prisma.Decimal(top10HolderRate.toFixed(2))
+                  : null,
               updated_at: new Date(),
             },
             create: {
               chain: token.chain,
               token_address: token.token_address,
-              anti_whale_modifiable: Number(securityData.anti_whale_modifiable),
+              anti_whale_modifiable: safeParseInt(
+                securityData.anti_whale_modifiable,
+              ),
               buy_tax: securityData.buy_tax,
-              can_take_back_ownership: Number(
+              can_take_back_ownership: safeParseInt(
                 securityData.can_take_back_ownership,
               ),
-              cannot_buy: Number(securityData.cannot_buy),
-              cannot_sell_all: Number(securityData.cannot_sell_all),
+              cannot_buy: safeParseInt(securityData.cannot_buy),
+              cannot_sell_all: safeParseInt(securityData.cannot_sell_all),
               creator_address: securityData.creator_address,
               creator_balance: securityData.creator_balance,
               creator_percent: securityData.creator_percent,
               external_call: securityData.external_call,
-              hidden_owner: Number(securityData.hidden_owner),
-              honeypot_with_same_creator: Number(
+              hidden_owner: safeParseInt(securityData.hidden_owner),
+              honeypot_with_same_creator: safeParseInt(
                 securityData.honeypot_with_same_creator,
               ),
-              is_airdrop_scam: Number(securityData.is_airdrop_scam),
-              is_anti_whale: Number(securityData.is_anti_whale),
-              is_blacklisted: Number(securityData.is_blacklisted),
-              is_honeypot: Number(securityData.is_honeypot),
-              is_in_dex: Number(securityData.is_in_dex),
-              is_mintable: Number(securityData.is_mintable),
-              is_open_source: Number(securityData.is_open_source),
-              is_proxy: Number(securityData.is_proxy),
-              is_whitelisted: Number(securityData.is_whitelisted),
-              lp_holder_count: Number(securityData.lp_holder_count),
+              is_airdrop_scam: safeParseInt(securityData.is_airdrop_scam),
+              is_anti_whale: safeParseInt(securityData.is_anti_whale),
+              is_blacklisted: safeParseInt(securityData.is_blacklisted),
+              is_honeypot: safeParseInt(securityData.is_honeypot),
+              is_in_dex: safeParseInt(securityData.is_in_dex),
+              is_mintable: safeParseInt(securityData.is_mintable),
+              is_open_source: safeParseInt(securityData.is_open_source),
+              is_proxy: safeParseInt(securityData.is_proxy),
+              is_whitelisted: safeParseInt(securityData.is_whitelisted),
+              lp_holder_count: safeParseInt(securityData.lp_holder_count),
               lp_total_supply: securityData.lp_total_supply,
               note: securityData.note,
               other_potential_risks: securityData.other_potential_risks,
@@ -274,13 +311,18 @@ async function updateTokenSecurity(): Promise<void> {
               token_symbol: securityData.token_symbol,
               total_supply: securityData.total_supply,
               trading_cooldown: securityData.trading_cooldown,
-              transfer_pausable: Number(securityData.transfer_pausable),
-              is_true_token: Number(securityData.is_true_token),
+              transfer_pausable: safeParseInt(securityData.transfer_pausable),
+              is_true_token: safeParseInt(securityData.is_true_token),
               trust_list: securityData.trust_list,
-              // @ts-ignore
-              holder_count: Number(securityData.holder_count),
-              lock_info_rate: Number(lockInfoPercentage),
-              top_10_holder_rate: Number(top10HolderRate),
+              holder_count: safeParseInt(securityData.holder_count),
+              lock_info_rate:
+                lockInfoPercentage !== null
+                  ? new Prisma.Decimal(lockInfoPercentage.toFixed(2))
+                  : null,
+              top_10_holder_rate:
+                top10HolderRate !== null
+                  ? new Prisma.Decimal(top10HolderRate.toFixed(2))
+                  : null,
               updated_at: new Date(),
             },
           });
