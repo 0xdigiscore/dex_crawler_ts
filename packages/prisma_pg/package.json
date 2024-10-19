@@ -6,8 +6,10 @@
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
+    "migrate_diff": "prisma migrate dev diff",
     "format": "prisma format",
     "pull": "prisma db pull",
+    "push": "prisma migrate push",
     "build": "tsc -b"
   },
   "dependencies": {
