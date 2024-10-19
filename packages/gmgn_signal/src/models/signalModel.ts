@@ -88,11 +88,55 @@ export async function storeSignals(
             },
           });
 
+          // 定义时间窗口（15分钟前）
+          const fifteenMinutesAgo = BigInt(
+            Math.floor(Date.now() / 1000) - 15 * 60,
+          );
+
+          // 检查在过去15分钟内是否已经存在相同的信号
+          const existingSameTypeSignal = await tx.gmgnSignal.findFirst({
+            where: {
+              source: 'gmgn_web',
+              chain: signal.token?.chain,
+              token_address: signal.token_address,
+              signal_type: signal.signal_type,
+              timestamp: {
+                gte: fifteenMinutesAgo,
+              },
+            },
+          });
+
+          if (existingSameTypeSignal) {
+            console.log(
+              `在过去15分钟内已存在相同的信号（source: gmgn_web, chain: ${signal.token?.chain}, token_address: ${signal.token_address}, signal_type: ${signal.signal_type}）。跳过该信号。`,
+            );
+            return existingSameTypeSignal;
+          }
+
           // 创建新的 GmgnSignal
-          return await tx.gmgnSignal.create({
-            data: {
+          return await tx.gmgnSignal.upsert({
+            where: {
+              //@ts-ignore
+              gmgnSignalUnique: {
+                source: 'gmgn_web',
+                chain: signal.token?.chain,
+                token_address: signal.token_address,
+                signal_type: signal.signal_type,
+                timestamp: BigInt(signal.timestamp),
+              },
+            },
+            update: {
+              // 如果记录已存在且在15分钟内，更新 occurrence_count 和 last_occurrence
+              //@ts-ignore
+              occurrence_count: {
+                increment: 1,
+              },
+              last_occurrence: now,
+            },
+            create: {
               //@ts-ignore
               signal_id: signal.id, // 使用传入的 id
+              source: 'gmgn_web',
               timestamp: BigInt(signal.timestamp),
               maker: signal.maker,
               token_address: signal.token_address,
@@ -101,7 +145,10 @@ export async function storeSignals(
               chain: signal.token?.chain,
               token_price: signal.token_price,
               from_timestamp: signal.from_timestamp,
-              updated_at: signal.updated_at,
+              //@ts-ignore
+              updated_at: signal.updated_at
+                ? new Date(signal.updated_at * 1000)
+                : undefined,
               buy_duration: signal.buy_duration,
               buy_usd: signal.buy_usd,
               tx_count: signal.tx_count,
@@ -114,6 +161,8 @@ export async function storeSignals(
               link: signal.link,
               recent_buys: signal.recent_buys,
               is_first: signal.is_first,
+              occurrence_count: 1, // Add this line to set the initial occurrence count
+              last_occurrence: new Date(), // Add this line to set the initial last occurrence
             },
           });
         },

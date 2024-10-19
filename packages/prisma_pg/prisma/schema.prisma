@@ -360,7 +360,7 @@ model GmgnSignal {
   chain             String          @db.VarChar(255)
   token_price       Decimal?
   from_timestamp    BigInt?
-  updated_at        DateTime        @updatedAt
+  updated_at        DateTime?        @updatedAt
   buy_duration      Int?
   buy_usd           Decimal?
   tx_count          Int?
@@ -379,10 +379,11 @@ model GmgnSignal {
   raw_data          Json?
   token             Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
   UserOrder         UserOrder[]
-  occurrence_count  Int             @default(1)
+  occurrence_count  Int?             @default(1)
   last_occurrence   DateTime        @default(now())
 
-  @@unique([source, chain, token_address, signal_type])
+  @@unique([source, chain, token_address, signal_type, timestamp], name: "gmgnSignalUnique")  // 修改此行
+
   @@index([chain, token_address])
   @@index([source, chain, token_address])
   @@index([last_occurrence])
