@@ -119,7 +119,7 @@ async function processTokenData(
   await updateTokenMetricsInDatabase(tokenMetrics);
   log.info(`Token ${token.token_address} metrics updated.`);
 
-  if (token.chain === 'sol') {
+  if (token.chain === 'eth') {
     const tokenSecurity = parseTokenSecurity(token, result);
     if (tokenSecurity) {
       await updateTokenSecurityInDatabase(tokenSecurity);
