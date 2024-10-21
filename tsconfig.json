@@ -36,6 +36,9 @@
     },
     {
       "path": "packages/dextools_crawler"
+    },
+    {
+      "path": "packages/solsniffe_crawler"
     }
   ]
 }

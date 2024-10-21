@@ -25,7 +25,7 @@ async function crawl(url) {
             accept: 'application/json',
             'accept-encoding': 'gzip, deflate, br, zstd',
             'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            referer: 'https://www.dextools.io',
+            //referer: 'https://solsniffer.com/',
 
             'sec-fetch-dest': 'empty',
             'sec-fetch-mode': 'cors',
@@ -65,5 +65,5 @@ async function crawl(url) {
 
 // Example usage
 const targetUrl =
-  'https://gmgn.ai/defi/quotation/v1/rank/eth/wallets/7d?orderby=pnl_7d&direction=desc';
+  'https://solsniffer.com/api/v1/sniffer/token/FqvtZ2UFR9we82Ni4LeacC1zyTiQ77usDo31DUokpump';
 crawl(targetUrl);
