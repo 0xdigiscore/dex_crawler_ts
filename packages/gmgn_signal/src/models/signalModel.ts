@@ -122,7 +122,7 @@ export async function storeSignals(
                 chain: signal.token?.chain,
                 token_address: signal.token_address,
                 signal_type: signal.signal_type,
-                timestamp: BigInt(new Date(signal.timestamp).getTime() / 1000),
+                timestamp: safeTimestampToBigInt(signal.timestamp),
               },
             },
             update: {
@@ -137,7 +137,7 @@ export async function storeSignals(
               //@ts-ignore
               signal_id: signal.id, // 使用传入的 id
               source: 'gmgn_web',
-              timestamp: BigInt(new Date(signal.timestamp).getTime() / 1000),
+              timestamp: safeTimestampToBigInt(signal.timestamp),
               maker: signal.maker,
               token_address: signal.token_address,
               //@ts-ignore
@@ -180,4 +180,12 @@ export async function storeSignals(
   }
 
   return storedSignals;
+}
+
+function safeTimestampToBigInt(timestamp: number | string): bigint {
+  // 如果是字符串，先转换为数字
+  const numTimestamp =
+    typeof timestamp === 'string' ? parseFloat(timestamp) : timestamp;
+  // 直接取整，然后转换为 BigInt
+  return BigInt(Math.floor(numTimestamp));
 }
