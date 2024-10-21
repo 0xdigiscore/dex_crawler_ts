@@ -183,14 +183,13 @@ export async function storeSignals(
 }
 
 function safeTimestampToBigInt(timestamp: number | string): bigint {
-  // 如果是字符串，先转换为数字
+  // 将字符串类型的时间戳转换为数字类型
   const numTimestamp =
     typeof timestamp === 'string' ? parseFloat(timestamp) : timestamp;
 
-  // 创建一个 Date 对象，并将其转换为 UTC 时间
-  const utcDate = new Date(numTimestamp * 1000);
-  const utcTimestamp = utcDate.getTime() / 1000;
+  // 减去8小时（以秒为单位）将北京时间转换为UTC时间
+  const utcTimestamp = numTimestamp - 8 * 60 * 60;
 
-  // 直接取整，然后转换为 BigInt
+  // 取整并转换为 BigInt 类型
   return BigInt(Math.floor(utcTimestamp));
 }
