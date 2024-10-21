@@ -56,6 +56,8 @@ model Token {
   top_trader_rat_trader_count             Int?
   top_trader_smart_degen_count            Int?
   deploy_time                             BigInt?
+  score                                   Decimal?
+
   gmgnSignals                             GmgnSignal[]   @relation("TokenGmgnSignals")
   hot_tokens                              HotToken[]
   tokenMetrics                            TokenMetrics[]
@@ -307,6 +309,8 @@ model SmartWallet {
   daily_profit_7d          Json?
   recent_buy_tokens        Json?
   txs                      Int              @default(0)
+  score                    Decimal?         @default(0)
+
   created_at               DateTime         @default(now())
   updated_at               DateTime         @updatedAt
   wallet_activities        WalletActivity[]
@@ -368,6 +372,8 @@ model GmgnSignal {
   smart_buy         Int?
   smart_sell        Int?
   signal_1h_count   Int?
+  score             Decimal?
+
   first_entry_price Decimal?
   price_change      Float?
   link              Json?
@@ -375,6 +381,7 @@ model GmgnSignal {
   is_first          Boolean         @default(true)
   created_at        DateTime        @default(now())
   token_symbol      String?         @db.VarChar(255)
+  
   ExecutedSignal    ExecutedSignal?
   raw_data          Json?
   token             Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])

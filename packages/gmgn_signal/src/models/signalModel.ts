@@ -122,7 +122,7 @@ export async function storeSignals(
                 chain: signal.token?.chain,
                 token_address: signal.token_address,
                 signal_type: signal.signal_type,
-                timestamp: BigInt(signal.timestamp),
+                timestamp: BigInt(new Date(signal.timestamp).getTime() / 1000),
               },
             },
             update: {
@@ -137,7 +137,7 @@ export async function storeSignals(
               //@ts-ignore
               signal_id: signal.id, // 使用传入的 id
               source: 'gmgn_web',
-              timestamp: BigInt(signal.timestamp),
+              timestamp: BigInt(new Date(signal.timestamp).getTime() / 1000),
               maker: signal.maker,
               token_address: signal.token_address,
               //@ts-ignore
