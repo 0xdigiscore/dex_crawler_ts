@@ -351,6 +351,8 @@ async function updateTokenSecurityInDatabase(
           },
         },
         is_honeypot: securityData.is_honeypot,
+        is_open_source: securityData.is_open_source,
+        is_mintable: securityData.is_mintable,
         // anti_whale_modifiable: securityData.anti_whale_modifiable,
         // buy_tax: securityData.buy_tax,
         // can_take_back_ownership: securityData.can_take_back_ownership,
@@ -390,6 +392,7 @@ async function updateTokenSecurityInDatabase(
       },
       update: {
         is_honeypot: securityData.is_honeypot,
+        is_open_source: securityData.is_open_source,
         /* anti_whale_modifiable: securityData.anti_whale_modifiable,
         buy_tax: securityData.buy_tax,
         can_take_back_ownership: securityData.can_take_back_ownership,
