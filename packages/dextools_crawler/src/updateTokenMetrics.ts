@@ -125,9 +125,9 @@ async function handleRequest({ request, page, log }) {
     if (jsonData.results && jsonData.results.length > 0) {
       // Find the result with the highest metrics.fdv
       const bestResult = jsonData.results.reduce((max, current) => {
-        const maxFdv = Number(max.token?.metrics?.fdv || '0');
-        const currentFdv = Number(current.token?.metrics?.fdv || '0');
-        return safeCompare(currentFdv, maxFdv) > 0 ? current : max;
+        const maxLiquidity = Number(max?.metrics?.liquidity || '0');
+        const currentLiquidity = Number(current?.metrics?.liquidity || '0');
+        return safeCompare(currentLiquidity, maxLiquidity) > 0 ? current : max;
       }, jsonData.results[0]);
       await processTokenData(token, bestResult, log);
     } else {
