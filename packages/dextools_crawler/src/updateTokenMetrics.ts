@@ -137,7 +137,8 @@ async function processTokenData(
 // Function to parse DextoolsResult into TokenMetrics
 function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
   const metrics = result.metrics;
-  const periodStats = result.periodStats;
+  const periodStats = result.periodStats || {};
+
   const price = result.price;
   const timestamp = result.price_timestamp
     ? Math.floor(new Date(result.price_timestamp).getTime() / 1000)
