@@ -68,6 +68,33 @@ function initializeCrawler(): PlaywrightCrawler {
     },
     preNavigationHooks: [setupRequestInterception],
     requestHandler: handleRequest,
+    failedRequestHandler: async ({ request, error, retryCount }) => {
+      console.warn(
+        `Request for ${request.url} failed with error: ${error}. Retry count: ${retryCount}`,
+      );
+      if (typeof retryCount === 'number' && retryCount > 3) {
+        console.warn(`Retrying ${request.url} without proxy.`);
+        // Retry the request without proxy
+        const crawlerWithoutProxy = new PlaywrightCrawler({
+          requestHandlerTimeoutSecs: 180,
+          maxConcurrency: 6,
+          launchContext: {
+            launcher: chromium,
+            launchOptions: {
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            },
+          },
+          preNavigationHooks: [setupRequestInterception],
+          requestHandler: handleRequest,
+        });
+        await crawlerWithoutProxy.run([request]);
+      } else {
+        console.error(
+          `Failed to process ${request.url} after retries with and without proxy.`,
+        );
+      }
+    },
   });
 }
 
