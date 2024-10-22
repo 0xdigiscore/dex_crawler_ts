@@ -144,14 +144,14 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
     ? Math.floor(new Date(result.price_timestamp).getTime() / 1000)
     : Math.floor(Date.now() / 1000);
 
+  // Assign current timestamp if result.creationTime is null
   const token_deploy_timestamp = result.creationTime
     ? Math.floor(new Date(result.creationTime).getTime() / 1000)
-    : null;
+    : Math.floor(Date.now() / 1000);
 
   const tokenMetrics: TokenMetrics = {
     chain: token.chain,
     token_address: token.token_address,
-    //@ts-ignore
     timestamp: BigInt(timestamp),
     token_deploy_timestamp: BigInt(token_deploy_timestamp),
     price: price,
