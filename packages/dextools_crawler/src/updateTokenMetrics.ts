@@ -153,12 +153,12 @@ async function processTokenData(
   await updateTokenMetricsInDatabase(tokenMetrics);
   log.info(`Token ${token.token_address} metrics updated.`);
 
-  // if (token.chain === 'sol') {
-  //   const tokenSecurity = parseTokenSecurity(token, result);
-  //   if (tokenSecurity) {
-  //     await updateTokenSecurityInDatabase(tokenSecurity);
-  //   }
-  // }
+  if (token.chain === 'sol') {
+    const tokenSecurity = parseTokenSecurity(token, result);
+    if (tokenSecurity) {
+      await updateTokenSecurityInDatabase(tokenSecurity);
+    }
+  }
 }
 
 // Function to parse DextoolsResult into TokenMetrics
