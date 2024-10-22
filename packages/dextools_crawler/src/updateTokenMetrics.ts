@@ -8,6 +8,7 @@ import {
   TokenMetrics,
   TokenSecurityData,
 } from '@/interfaces.js';
+import { safeCompare } from './utils.js';
 
 // Main function to update token metrics
 async function updateTokenMetrics(): Promise<void> {
@@ -95,7 +96,13 @@ async function handleRequest({ request, page, log }) {
   try {
     const jsonData = await fetchDextoolsData(page, request.url);
     if (jsonData.results && jsonData.results.length > 0) {
-      await processTokenData(token, jsonData.results[0], log);
+      // Find the result with the highest metrics.fdv
+      const bestResult = jsonData.results.reduce((max, current) => {
+        const maxFdv = Number(max.token?.metrics?.fdv || '0');
+        const currentFdv = Number(current.token?.metrics?.fdv || '0');
+        return safeCompare(currentFdv, maxFdv) > 0 ? current : max;
+      }, jsonData.results[0]);
+      await processTokenData(token, bestResult, log);
     } else {
       log.error(`No results found for token ${token.token_address}`);
     }
