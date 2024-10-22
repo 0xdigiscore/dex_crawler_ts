@@ -45,7 +45,7 @@ async function fetchTokensFromDatabase(): Promise<Token[]> {
 function buildRequestList(tokens: Token[]): any[] {
   // Build request list
   return tokens.map((token) => ({
-    url: `https://www.dextools.io/shared/search/pair?query=${token.token_address}&strict=true`,
+    url: `https://www.dextools.io/shared/search/pair?query=${token.token_address.toLowerCase()}&strict=true`,
     userData: { token },
   }));
 }
