@@ -47,6 +47,7 @@ CREATE TABLE "Token" (
     "top_trader_rat_trader_count" INTEGER,
     "top_trader_smart_degen_count" INTEGER,
     "deploy_time" BIGINT,
+    "score" DECIMAL(65,30),
 
     CONSTRAINT "Token_pkey" PRIMARY KEY ("id")
 );
@@ -106,7 +107,7 @@ CREATE TABLE "TokenSecurity" (
 );
 
 -- CreateTable
-CREATE TABLE "TopBuys" (
+CREATE TABLE "TopBuysStats" (
     "id" SERIAL NOT NULL,
     "chain" VARCHAR(255) NOT NULL,
     "token_address" VARCHAR(255) NOT NULL,
@@ -128,7 +129,20 @@ CREATE TABLE "TopBuys" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "TopBuys_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "TopBuysStats_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TopBuysWallet" (
+    "id" SERIAL NOT NULL,
+    "chain" VARCHAR(255) NOT NULL,
+    "token_address" VARCHAR(255) NOT NULL,
+    "wallet_address" VARCHAR(255) NOT NULL,
+    "wallet_tag" VARCHAR(255),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "TopBuysWallet_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -280,6 +294,7 @@ CREATE TABLE "SmartWallet" (
     "daily_profit_7d" JSONB,
     "recent_buy_tokens" JSONB,
     "txs" INTEGER NOT NULL DEFAULT 0,
+    "score" DECIMAL(65,30) DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -321,11 +336,14 @@ CREATE TABLE "WalletActivity" (
 CREATE TABLE "GmgnSignal" (
     "id" SERIAL NOT NULL,
     "timestamp" BIGINT NOT NULL,
+    "source" VARCHAR(255) NOT NULL DEFAULT 'gmgn_web',
+    "signal_id" INTEGER,
     "maker" TEXT,
     "token_address" VARCHAR(255) NOT NULL,
     "chain" VARCHAR(255) NOT NULL,
     "token_price" DECIMAL(65,30),
     "from_timestamp" BIGINT,
+    "updated_at" TIMESTAMP(3),
     "buy_duration" INTEGER,
     "buy_usd" DECIMAL(65,30),
     "tx_count" INTEGER,
@@ -333,16 +351,17 @@ CREATE TABLE "GmgnSignal" (
     "smart_buy" INTEGER,
     "smart_sell" INTEGER,
     "signal_1h_count" INTEGER,
+    "score" DECIMAL(65,30),
     "first_entry_price" DECIMAL(65,30),
     "price_change" DOUBLE PRECISION,
     "link" JSONB,
     "recent_buys" JSONB,
-    "is_first" BOOLEAN,
+    "is_first" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "token_symbol" VARCHAR(255),
     "raw_data" JSONB,
-    "source" VARCHAR(255) NOT NULL DEFAULT 'gmgn_web',
-    "signal_id" INTEGER,
+    "occurrence_count" INTEGER DEFAULT 1,
+    "last_occurrence" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "GmgnSignal_pkey" PRIMARY KEY ("id")
 );
@@ -408,13 +427,22 @@ CREATE INDEX "TokenSecurity_token_address_idx" ON "TokenSecurity"("token_address
 CREATE UNIQUE INDEX "TokenSecurity_chain_token_address_key" ON "TokenSecurity"("chain", "token_address");
 
 -- CreateIndex
-CREATE INDEX "TopBuys_chain_idx" ON "TopBuys"("chain");
+CREATE INDEX "TopBuysStats_chain_idx" ON "TopBuysStats"("chain");
 
 -- CreateIndex
-CREATE INDEX "TopBuys_token_address_idx" ON "TopBuys"("token_address");
+CREATE INDEX "TopBuysStats_token_address_idx" ON "TopBuysStats"("token_address");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TopBuys_chain_token_address_key" ON "TopBuys"("chain", "token_address");
+CREATE UNIQUE INDEX "TopBuysStats_chain_token_address_key" ON "TopBuysStats"("chain", "token_address");
+
+-- CreateIndex
+CREATE INDEX "TopBuysWallet_chain_idx" ON "TopBuysWallet"("chain");
+
+-- CreateIndex
+CREATE INDEX "TopBuysWallet_token_address_idx" ON "TopBuysWallet"("token_address");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TopBuysWallet_chain_token_address_wallet_address_key" ON "TopBuysWallet"("chain", "token_address", "wallet_address");
 
 -- CreateIndex
 CREATE INDEX "TokenMetrics_chain_token_address_timestamp_idx" ON "TokenMetrics"("chain", "token_address", "timestamp");
@@ -444,7 +472,7 @@ CREATE INDEX "TopTrader_token_address_idx" ON "TopTrader"("token_address");
 CREATE INDEX "TopTrader_wallet_address_idx" ON "TopTrader"("wallet_address");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TopTrader_chain_token_address_wallet_address_hour_timestamp_key" ON "TopTrader"("chain", "token_address", "wallet_address", "hour_timestamp");
+CREATE UNIQUE INDEX "TopTrader_chain_token_address_wallet_address_key" ON "TopTrader"("chain", "token_address", "wallet_address");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SmartWallet_wallet_address_key" ON "SmartWallet"("wallet_address");
@@ -480,7 +508,10 @@ CREATE INDEX "GmgnSignal_chain_token_address_idx" ON "GmgnSignal"("chain", "toke
 CREATE INDEX "GmgnSignal_source_chain_token_address_idx" ON "GmgnSignal"("source", "chain", "token_address");
 
 -- CreateIndex
-CREATE INDEX "GmgnSignal_source_chain_token_address_timestamp_idx" ON "GmgnSignal"("source", "chain", "token_address", "timestamp");
+CREATE INDEX "GmgnSignal_last_occurrence_idx" ON "GmgnSignal"("last_occurrence");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GmgnSignal_source_chain_token_address_signal_type_timestamp_key" ON "GmgnSignal"("source", "chain", "token_address", "signal_type", "timestamp");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ExecutedSignal_signal_id_key" ON "ExecutedSignal"("signal_id");
@@ -504,7 +535,10 @@ CREATE INDEX "ix_groups_id" ON "groups"("id");
 ALTER TABLE "TokenSecurity" ADD CONSTRAINT "TokenSecurity_chain_token_address_fkey" FOREIGN KEY ("chain", "token_address") REFERENCES "Token"("chain", "token_address") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TopBuys" ADD CONSTRAINT "TopBuys_chain_token_address_fkey" FOREIGN KEY ("chain", "token_address") REFERENCES "Token"("chain", "token_address") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TopBuysStats" ADD CONSTRAINT "TopBuysStats_chain_token_address_fkey" FOREIGN KEY ("chain", "token_address") REFERENCES "Token"("chain", "token_address") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TopBuysWallet" ADD CONSTRAINT "TopBuysWallet_chain_token_address_fkey" FOREIGN KEY ("chain", "token_address") REFERENCES "Token"("chain", "token_address") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TokenMetrics" ADD CONSTRAINT "TokenMetrics_chain_token_address_fkey" FOREIGN KEY ("chain", "token_address") REFERENCES "Token"("chain", "token_address") ON DELETE RESTRICT ON UPDATE CASCADE;
