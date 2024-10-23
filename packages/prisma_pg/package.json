@@ -7,10 +7,12 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "migrate_diff": "prisma migrate dev diff",
+    "diff": "prisma migrate diff",
     "format": "prisma format",
     "pull": "prisma db pull",
     "push": "prisma migrate push",
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"
