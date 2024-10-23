@@ -3,7 +3,6 @@ import { Response } from 'playwright';
 import { URL } from 'url';
 import { upsertTopTraders } from '@/models/topTraderModel.js';
 
-// https://gmgn.ai/defi/quotation/v1/tokens/top_buyers/eth/0xa73b792906c79509d73fdfaaa78561e195010706
 export async function topBuyers({ request, log, response }: CrawlingContext) {
   log.info(`Processing Top Buyers: ${request.url}`);
   if (response && (response as Response).ok()) {

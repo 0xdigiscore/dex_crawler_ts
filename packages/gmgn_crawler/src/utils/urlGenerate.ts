@@ -9,3 +9,7 @@ export const generateTopTradersUrl = (address) => {
 export const generateWalletActivityUrl = (walletAddress, chain) => {
   return `https://gmgn.ai/defi/quotation/v1/wallet_activity/${chain}?type=buy&type=sell&wallet=${walletAddress}&limit=10&cost=10`;
 };
+
+export const generateTopBuyersUrl = (address, chain) => {
+  return `https://gmgn.ai/defi/quotation/v1/tokens/top_buyers/${chain}/${address}`;
+};
