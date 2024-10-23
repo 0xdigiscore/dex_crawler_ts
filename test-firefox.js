@@ -25,7 +25,7 @@ async function crawl(url) {
             accept: 'application/json',
             'accept-encoding': 'gzip, deflate, br, zstd',
             'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            //referer: 'https://solsniffer.com/',
+            referer: 'https://gmgn.ai',
 
             'sec-fetch-dest': 'empty',
             'sec-fetch-mode': 'cors',
@@ -65,5 +65,5 @@ async function crawl(url) {
 
 // Example usage
 const targetUrl =
-  'https://solsniffer.com/api/v1/sniffer/token/FqvtZ2UFR9we82Ni4LeacC1zyTiQ77usDo31DUokpump';
+  'https://gmgn.ai/defi/quotation/v1/rank/eth/swaps/1h?orderby=swaps&direction=desc';
 crawl(targetUrl);
