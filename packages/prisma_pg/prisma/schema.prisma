@@ -260,7 +260,7 @@ model TopTrader {
   hour_timestamp         DateTime
   token                  Token     @relation(fields: [chain, token_address], references: [chain, token_address])
 
-  @@unique([chain, token_address, wallet_address, hour_timestamp], name: "topTraderCompositeUnique")
+  @@unique([chain, token_address, wallet_address], name: "topTraderCompositeUnique")
   @@index([chain])
   @@index([token_address])
   @@index([wallet_address])
