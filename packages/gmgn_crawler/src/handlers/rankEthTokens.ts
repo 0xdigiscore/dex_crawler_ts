@@ -22,11 +22,11 @@ export async function rankEthTokens({
       log.info('No addresses found in jsonResponse.data.data.rank');
     }
 
-    const newUrls = [];
-    for (const address of addresses) {
-      newUrls.push(generateTopTradersUrl(address));
-    }
-    await enqueueLinks({ urls: newUrls, label: 'top/token/traders' });
+    // const newUrls = [];
+    // for (const address of addresses) {
+    //   newUrls.push(generateTopTradersUrl(address));
+    // }
+    // await enqueueLinks({ urls: newUrls, label: 'top/token/traders' });
   } else {
     log.error(`Failed to fetch data from ${request.url}`);
   }

@@ -3,7 +3,7 @@ import { rankSolTokens } from './handlers/rankSolTokens.js';
 import { rankEthTokens } from './handlers/rankEthTokens.js';
 import { rankEthWallets } from './handlers/rankEthWallets.js';
 import { rankSolWallets } from './handlers/rankSolWallets.js';
-import { topTokenTraders } from './handlers/tokenTopTraders.js';
+//import { topTokenTraders } from './handlers/_tokenTopTraders.js';
 import { smartEthWalletNew } from './handlers/smartEthWalletNew.js';
 import { smartWalletActivity } from './handlers/smartWalletActivity.js';
 import { topBuyers } from './handlers/topBuyers.js';
