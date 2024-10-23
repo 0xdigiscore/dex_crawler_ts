@@ -97,7 +97,7 @@ async function updateTokensData(): Promise<void> {
               const holderData = data.holders as HolderData;
               await updateTopBuysInDatabase(token, holderData);
               console.log(
-                `Token ${token.token_address} top buys data updated.`,
+                `Token ${token.token_address} top_buys_stats data updated.`,
               );
               break;
             default:
