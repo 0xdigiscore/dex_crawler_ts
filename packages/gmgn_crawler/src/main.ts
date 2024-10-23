@@ -37,7 +37,7 @@ async function main() {
   });
 
   try {
-    // await crawler.run();
+    await crawler.run();
     console.log('爬虫任务成功完成');
   } catch (error) {
     console.error('爬虫运行过程中发生错误:', error);

@@ -11,15 +11,13 @@ export async function topBuyers({ request, log, response }: CrawlingContext) {
     // Extract the data array from the response
     const { code, msg, data } = jsonResponse;
 
-    if (code === 0 && Array.isArray(data)) {
+    if (code === 0 && Array.isArray(data.holders.holderInfo)) {
+      // console.log('data.holderInfo', data.holders.holderInfo);
       // Extract chain and tokenAddress from the request URL
       const { chain, tokenAddress } = extractTokenInfoFromRequest(request.url);
 
       try {
-        await upsertTopTraders(chain, tokenAddress, data);
-        log.info(
-          `Processed ${data.length} top traders for token ${tokenAddress} on ${chain}`,
-        );
+        //
       } catch (error) {
         log.error(`Error processing top traders: ${error}`);
       }
@@ -29,14 +27,13 @@ export async function topBuyers({ request, log, response }: CrawlingContext) {
   }
 }
 
-// Updated extractTokenInfoFromRequest function
 function extractTokenInfoFromRequest(url: string): {
   chain: string;
   tokenAddress: string;
 } {
   const parsedUrl = new URL(url);
   const pathnameParts = parsedUrl.pathname.split('/').filter(Boolean);
-
+  console.log('pathnameParts', pathnameParts);
   // Adjust indices based on your actual URL structure
   const len = pathnameParts.length;
   const chain = pathnameParts[len - 2];
