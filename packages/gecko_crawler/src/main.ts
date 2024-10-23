@@ -93,7 +93,7 @@ async function updateTokensData(): Promise<void> {
               await updateTokenStatsInDatabase(token, data as TokenStatsData);
               console.log(`Token ${token.token_address} stats updated.`);
               break;
-            case 'top_buys':
+            case 'top_buys_stats':
               const holderData = data.holders as HolderData;
               await updateTopBuysInDatabase(token, holderData);
               console.log(
@@ -138,7 +138,7 @@ function buildRequests(tokens: Token[]) {
     });
     topBuysRequests.push({
       url: `${BASE_URLS.topBuys}/${TOKEN_CHAIN}/${token.token_address}`,
-      userData: { token, type: 'top_buys' },
+      userData: { token, type: 'top_buys_stats' },
     });
   });
 
