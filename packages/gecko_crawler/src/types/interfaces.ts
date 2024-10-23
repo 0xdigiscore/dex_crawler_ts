@@ -43,4 +43,4 @@ export interface HolderData {
   };
 }
 
-export type RequestType = 'security' | 'stats' | 'top_buys';
+export type RequestType = 'security' | 'stats' | 'top_buys_stats';

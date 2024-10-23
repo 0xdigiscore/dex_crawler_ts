@@ -4,7 +4,7 @@ import { Token, HolderData } from '@/types/interfaces.js';
 export async function updateTopBuysInDatabase(token: Token, data: HolderData) {
   try {
     //@ts-ignore
-    await prisma.topBuys.upsert({
+    await prisma.topBuysStats.upsert({
       where: {
         topBuysCompositeUnique: {
           chain: token.chain,

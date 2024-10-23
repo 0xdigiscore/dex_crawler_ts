@@ -62,7 +62,7 @@ model Token {
   hot_tokens    HotToken[]
   tokenMetrics  TokenMetrics[]
   tokenSecurity TokenSecurity?  @relation("TokenTokenSecurity")
-  top_buys      TopBuys?
+  top_buys_stats      TopBuysStats?
   top_traders   TopTrader[]
   TopBuysWallet TopBuysWallet[]
 
@@ -127,7 +127,7 @@ model TokenSecurity {
   @@index([token_address])
 }
 
-model TopBuys {
+model TopBuysStats {
   id                      Int      @id @default(autoincrement())
   chain                   String   @db.VarChar(255)
   token_address           String   @db.VarChar(255)
