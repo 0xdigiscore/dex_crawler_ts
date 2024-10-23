@@ -26,11 +26,6 @@ export const crawlerGmgnUrlConfigs: CrawlerUrlConfig[] = [
     datasetName: 'sol_smart_wallets_tokens',
   },
   {
-    url: 'https://1step.app/api/smartMoneyList?chainId=0x1&time=7day',
-    label: '1step/eth/wallets',
-    datasetName: '1step_eth_wallets',
-  },
-  {
     url: 'https://gmgn.ai/defi/quotation/v1/tokens/top_buyers/eth/0xa73b792906c79509d73fdfaaa78561e195010706',
     label: 'top/buyers',
     datasetName: 'top_buyers',
