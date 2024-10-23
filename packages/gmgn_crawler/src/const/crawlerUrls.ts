@@ -25,11 +25,6 @@ export const crawlerGmgnUrlConfigs: CrawlerUrlConfig[] = [
     label: 'rank/sol/wallets',
     datasetName: 'sol_smart_wallets_tokens',
   },
-  {
-    url: 'https://1step.app/api/smartMoneyList?chainId=0x1&time=7day',
-    label: '1step/eth/wallets',
-    datasetName: '1step_eth_wallets',
-  },
 ];
 
 export const getDatasetName = (url: string): string => {

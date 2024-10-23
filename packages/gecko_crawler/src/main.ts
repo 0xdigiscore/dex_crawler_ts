@@ -58,6 +58,28 @@ async function updateTokensData(): Promise<void> {
           ignoreHTTPSErrors: true,
         },
       },
+      // Use preNavigationHooks to modify headers before navigation
+      preNavigationHooks: [
+        async ({ page, request, log }, gotoOptions) => {
+          // Set up request interception
+          await page.route('**', (route) => {
+            const headers = {
+              ...route.request().headers(),
+              accept: 'application/json',
+              'accept-encoding': 'gzip, deflate, br, zstd',
+              'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+              referer: 'https://gmgn.ai',
+
+              'sec-fetch-dest': 'empty',
+              'sec-fetch-mode': 'cors',
+              'sec-fetch-site': 'same-origin',
+            };
+
+            // Continue the request with modified headers
+            route.continue({ headers });
+          });
+        },
+      ],
       requestHandler: async ({ request, page }) => {
         const { token, type } = request.userData as {
           token: Token;

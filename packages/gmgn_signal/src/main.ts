@@ -26,6 +26,28 @@ async function main() {
         ignoreHTTPSErrors: true, // 忽略 https 证书错误
       },
     },
+    // Use preNavigationHooks to modify headers before navigation
+    preNavigationHooks: [
+      async ({ page, request, log }, gotoOptions) => {
+        // Set up request interception
+        await page.route('**', (route) => {
+          const headers = {
+            ...route.request().headers(),
+            accept: 'application/json',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+            'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+            referer: 'https://gmgn.ai',
+
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+          };
+
+          // Continue the request with modified headers
+          route.continue({ headers });
+        });
+      },
+    ],
 
     maxRequestsPerCrawl: 5000,
     maxRequestRetries: 10,
