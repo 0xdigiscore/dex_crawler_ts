@@ -1,6 +1,7 @@
 import { CrawlingContext } from 'crawlee';
 import { Response } from 'playwright';
 import { parseAndSaveHotTokens } from '../models/tokenModel.js';
+import { generateTopTradersUrl } from '@/utils/urlGenerate.js';
 
 export async function rankEthTokens({
   request,
@@ -20,11 +21,12 @@ export async function rankEthTokens({
     if (addresses.length === 0) {
       log.info('No addresses found in jsonResponse.data.data.rank');
     }
-    for (const address of addresses) {
-      const newUrl = `https://gmgn.ai/defi/quotation/v1/tokens/top_traders/eth/${address}?orderby=profit&direction=desc`;
 
-      await enqueueLinks({ urls: [newUrl], label: 'top/token/traders' });
+    const newUrls = [];
+    for (const address of addresses) {
+      newUrls.push(generateTopTradersUrl(address));
     }
+    await enqueueLinks({ urls: newUrls, label: 'top/token/traders' });
   } else {
     log.error(`Failed to fetch data from ${request.url}`);
   }

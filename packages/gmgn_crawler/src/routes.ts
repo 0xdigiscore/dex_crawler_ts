@@ -7,6 +7,7 @@ import { topTokenTraders } from './handlers/tokenTopTraders.js';
 import { oneStepEthWallets } from './handlers/1stepEthWallets.js';
 import { smartEthWalletNew } from './handlers/smartEthWalletNew.js';
 import { smartWalletActivity } from './handlers/smartWalletActivity.js';
+import { topBuyers } from './handlers/topBuyers.js';
 
 export const router = createPlaywrightRouter();
 
@@ -23,3 +24,4 @@ router.addHandler('rank/sol/wallets', rankSolWallets);
 router.addHandler('1step/eth/wallets', oneStepEthWallets);
 router.addHandler('smart/new/wallet', smartEthWalletNew);
 router.addHandler('smart/wallet/activity', smartWalletActivity);
+router.addHandler('top/buyers', topBuyers);

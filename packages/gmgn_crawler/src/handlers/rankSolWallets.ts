@@ -1,12 +1,13 @@
-import { CrawlingContext, EnqueueStrategy } from "crawlee";
-import { Response } from "playwright";
+import { CrawlingContext, EnqueueStrategy } from 'crawlee';
+import { Response } from 'playwright';
 import {
   extractWalletAddressFromUrl,
   parseAndSaveWallets,
-} from "@/models/walletModel.js";
-import { Dataset } from "crawlee";
-import { getDatasetName } from "@/const/crawlerUrls.js";
-import { storeData } from "@/utils/storedata.js";
+} from '@/models/walletModel.js';
+import { Dataset } from 'crawlee';
+import { getDatasetName } from '@/const/crawlerUrls.js';
+import { storeData } from '@/utils/storedata.js';
+import { generateWalletActivityUrl } from '@/utils/urlGenerate.js';
 
 export async function rankSolWallets({
   request,
@@ -25,18 +26,21 @@ export async function rankSolWallets({
     // Store data for each address
     const datasetName = getDatasetName(request.url);
     // await storeData(request.url, data, datasetName, log);
+
+    const newUrls = [];
     for (const wallet of walletsData) {
-      const walletAddress = wallet.wallet_address || wallet.address || "";
+      const walletAddress = wallet.wallet_address || wallet.address || '';
       // 这里抓取代币的activity 数据
-      const newUrl = `https://gmgn.ai/defi/quotation/v1/wallet_activity/sol?type=buy&type=sell&wallet=${walletAddress}&limit=10&cost=10`;
-      await enqueueLinks({
-        urls: [newUrl],
-        label: "smart/wallet/activity",
-        strategy: EnqueueStrategy.All,
-      });
+      newUrls.push(generateWalletActivityUrl(walletAddress, 'sol'));
     }
 
-    await parseAndSaveWallets(walletsData, "sol", "gmgn", log);
+    await enqueueLinks({
+      urls: newUrls,
+      label: 'smart/wallet/activity',
+      strategy: EnqueueStrategy.All,
+    });
+
+    await parseAndSaveWallets(walletsData, 'sol', 'gmgn', log);
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
   }

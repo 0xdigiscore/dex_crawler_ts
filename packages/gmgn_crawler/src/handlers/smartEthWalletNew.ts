@@ -1,10 +1,11 @@
-import { CrawlingContext, EnqueueStrategy } from "crawlee";
-import { Response } from "playwright";
+import { CrawlingContext, EnqueueStrategy } from 'crawlee';
+import { Response } from 'playwright';
 import {
   extractWalletAddressFromUrl,
   parseAndSaveWallets,
   WalletData,
-} from "@/models/walletModel.js";
+} from '@/models/walletModel.js';
+import { generateWalletActivityUrl } from '@/utils/urlGenerate.js';
 
 export async function smartEthWalletNew({
   request,
@@ -64,24 +65,24 @@ export async function smartEthWalletNew({
     log.warning(`walletData.tag: ${JSON.stringify(walletData.tags)}`);
 
     // Filter out wallets with unwanted tags
-    const unwantedTags = ["sandwich_bot", "scammer", "snipe_bot"];
+    const unwantedTags = ['sandwich_bot', 'scammer', 'snipe_bot'];
     if (
       walletData &&
       walletData.tags.some((tag) => unwantedTags.includes(tag))
     ) {
-      log.info(`Skipping wallet with unwanted tags: ${data.tags.join(", ")}`);
+      log.info(`Skipping wallet with unwanted tags: ${data.tags.join(', ')}`);
       return;
     }
     const wallet_address = extractWalletAddressFromUrl(request.url);
     // 这里抓取代币的activity 数据
-    const newUrl = `https://gmgn.ai/defi/quotation/v1/wallet_activity/eth?type=buy&type=sell&wallet=${wallet_address}&limit=10&cost=10`;
+    const newUrl = generateWalletActivityUrl(wallet_address, 'eth');
     await enqueueLinks({
       urls: [newUrl],
-      label: "smart/wallet/activity",
+      label: 'smart/wallet/activity',
       strategy: EnqueueStrategy.All,
     });
 
-    await parseAndSaveWallets([walletData], "eth", "1step", log, request.url);
+    await parseAndSaveWallets([walletData], 'eth', '1step', log, request.url);
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);
   }

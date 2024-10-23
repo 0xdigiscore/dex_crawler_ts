@@ -1,3 +1,4 @@
+import { generateWalletUrl } from '@/utils/urlGenerate.js';
 import { CrawlingContext, EnqueueStrategy } from 'crawlee';
 import { Response } from 'playwright';
 
@@ -20,14 +21,15 @@ export async function oneStepEthWallets({
     if (filteredAddresses.length === 0) {
       log.info('No valid addresses found');
     } else {
+      const newUrls = [];
       for (const address of filteredAddresses) {
-        const newUrl = `https://gmgn.ai/defi/quotation/v1/smartmoney/eth/walletNew/${address}?period=7d`;
-        await enqueueLinks({
-          urls: [newUrl],
-          label: 'smart/new/wallet',
-          strategy: EnqueueStrategy.All,
-        });
+        newUrls.push(generateWalletUrl(address));
       }
+      await enqueueLinks({
+        urls: newUrls,
+        label: 'smart/new/wallet',
+        strategy: EnqueueStrategy.All,
+      });
     }
   } else {
     log.error(`Failed to fetch response from: ${request.url}`);

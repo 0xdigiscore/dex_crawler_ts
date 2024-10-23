@@ -1,41 +1,19 @@
-import { PlaywrightCrawler, ProxyConfiguration } from 'crawlee';
 import { router } from '@/routes.js';
-import { firefox } from 'playwright';
 import { crawlerGmgnUrlConfigs } from './const/crawlerUrls.js';
-
-const proxyConfiguration = new ProxyConfiguration({
-  proxyUrls: [process.env.PROXY_URL],
-});
+import gmgn from './site/gmgn.js';
+import { RequestQueue } from 'crawlee';
 
 async function main() {
-  const crawler = new PlaywrightCrawler({
-    useSessionPool: true,
-    persistCookiesPerSession: true,
-    proxyConfiguration,
+  const requestQueue = await RequestQueue.open();
+  requestQueue.addRequests(crawlerGmgnUrlConfigs);
+
+  const crawler = gmgn({
     requestHandler: router,
-    // Unified Cookies Management and Rate Limiting
-    sessionPoolOptions: {
-      maxPoolSize: 20,
-    },
-    launchContext: {
-      // Set the Firefox browser to be used by the crawler.
-      // If launcher option is not specified here,
-      // default Chromium browser will be used.
-      launcher: firefox,
-      launchOptions: {
-        ignoreHTTPSErrors: true, // 忽略 https 证书错误
-      },
-    },
-    maxRequestsPerCrawl: 5000,
-    maxRequestRetries: 10,
-    maxRequestsPerMinute: 300,
-    maxConcurrency: 2,
-    browserPoolOptions: {
-      useFingerprints: true,
-    },
+    requestQueue,
   });
+
   try {
-    await crawler.run(crawlerGmgnUrlConfigs);
+    await crawler.run();
     console.log('爬虫任务成功完成');
   } catch (error) {
     console.error('爬虫运行过程中发生错误:', error);
