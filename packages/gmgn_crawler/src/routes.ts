@@ -22,4 +22,4 @@ router.addHandler('rank/sol/wallets', rankSolWallets);
 //router.addHandler('top/token/traders', topTokenTraders);
 router.addHandler('smart/new/wallet', smartEthWalletNew);
 router.addHandler('smart/wallet/activity', smartWalletActivity);
-//router.addHandler('top/buyers', topBuyers);
+router.addHandler('top/buyers', topBuyers);

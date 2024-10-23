@@ -3,6 +3,7 @@ import { crawlerGmgnUrlConfigs } from './const/crawlerUrls.js';
 import gmgn from './site/gmgn.js';
 import { RequestQueue } from 'crawlee';
 import { generateTopBuyersUrl } from './utils/urlGenerate.js';
+import prisma from './database/prisma.js';
 
 const data = [
   {
@@ -43,6 +44,7 @@ async function main() {
     console.error('爬虫运行过程中发生错误:', error);
   } finally {
     await crawler.teardown();
+    await prisma.$disconnect();
     console.log('爬虫资源已清理，程序正常退出');
     process.exit(0);
   }

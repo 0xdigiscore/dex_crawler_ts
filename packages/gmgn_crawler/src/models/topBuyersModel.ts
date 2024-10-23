@@ -9,41 +9,55 @@ interface TopBuyerData {
 
 export async function upsertTopBuyer(
   chain: string,
-  tokenAddress: string,
   topBuyerData: TopBuyerData,
 ) {
-  const now = new Date();
-
-  const existingRecord = await prisma.topBuyswallet.findUnique({
+  const existingRecord = await prisma.topBuysWallet.findUnique({
     where: {
-      topBuysCompositeUnique: {
+      topBuysWalletCompositeUnique: {
         chain,
-        token_address: tokenAddress,
-        // w: topBuyerData.wallet_address,
+        token_address: topBuyerData.token_address,
+        wallet_address: topBuyerData.wallet_address,
       },
     },
   });
 
-  // 如果记录已存在，直接返回，不进行任何操作
   if (existingRecord) {
     return;
   }
-  await prisma..create({
+  const tokenExist = await prisma.token.findUnique({
+    where: {
+      chain_token_address: {
+        chain,
+        token_address: topBuyerData.token_address,
+      },
+    },
+  });
+  if (!tokenExist) {
+    await prisma.token.create({
+      data: {
+        chain: chain,
+        token_address: topBuyerData.token_address,
+      },
+    });
+  }
+  const re = await prisma.topBuysWallet.create({
     data: {
       chain: chain,
-      token_address: tokenAddress,
+      token_address: topBuyerData.token_address,
+      wallet_address: topBuyerData.wallet_address,
       created_at: new Date(),
       updated_at: new Date(),
     },
   });
+
+  console.log('re', re, topBuyerData);
 }
 
 export async function upsertTopBuyers(
   chain: string,
-  tokenAddress: string,
   topBuyersData: TopBuyerData[],
 ) {
   for (const buyerData of topBuyersData) {
-    await upsertTopBuyer(chain, tokenAddress, buyerData);
+    await upsertTopBuyer(chain, buyerData);
   }
 }
