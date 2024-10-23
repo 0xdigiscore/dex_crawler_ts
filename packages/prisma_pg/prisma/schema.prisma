@@ -9,30 +9,30 @@ datasource db {
 }
 
 model Token {
-  id                                      Int            @id @default(autoincrement())
-  chain                                   String         @db.VarChar(255)
-  token_address                           String         @db.VarChar(255)
-  symbol                                  String?        @db.VarChar(255)
-  name                                    String?        @db.VarChar(255)
+  id                                      Int      @id @default(autoincrement())
+  chain                                   String   @db.VarChar(255)
+  token_address                           String   @db.VarChar(255)
+  symbol                                  String?  @db.VarChar(255)
+  name                                    String?  @db.VarChar(255)
   logo                                    String?
   decimals                                Int?
   total_supply                            Decimal?
   website                                 String?
   telegram                                String?
-  twitter_username                        String?        @db.VarChar(255)
+  twitter_username                        String?  @db.VarChar(255)
   is_open_source                          Boolean?
   pool_creation_timestamp                 BigInt?
   is_honeypot                             Boolean?
   buy_tax                                 Decimal?
   sell_tax                                Decimal?
-  created_at                              DateTime       @default(now())
-  updated_at                              DateTime       @updatedAt
+  created_at                              DateTime @default(now())
+  updated_at                              DateTime @updatedAt
   can_mint                                Boolean?
   has_renounced_ownership                 Boolean?
   top_pools                               String?
   description                             String?
   creator_close                           Boolean?
-  creator_token_status                    String?        @db.VarChar(255)
+  creator_token_status                    String?  @db.VarChar(255)
   cto_flag                                Int?
   is_show_alert                           Boolean?
   lockInfo                                Json?
@@ -40,13 +40,13 @@ model Token {
   call_number                             Int?
   hot_level                               Int?
   rat_trader_amount_rate                  Decimal?
-  average_tax                             Decimal?       @db.Decimal
+  average_tax                             Decimal? @db.Decimal
   bluechip_owner_count                    Int?
   bluechip_owner_percentage               Float?
   degen_call_count                        Int?
   honeypot                                Int?
   signal_count                            Int?
-  top_10_holder_rate                      Decimal?       @db.Decimal
+  top_10_holder_rate                      Decimal? @db.Decimal
   top_fresh_wallet_count                  Int?
   top_rat_trader_amount_percentage        Float?
   top_rat_trader_count                    Int?
@@ -58,12 +58,13 @@ model Token {
   deploy_time                             BigInt?
   score                                   Decimal?
 
-  gmgnSignals                             GmgnSignal[]   @relation("TokenGmgnSignals")
-  hot_tokens                              HotToken[]
-  tokenMetrics                            TokenMetrics[]
-  tokenSecurity                           TokenSecurity? @relation("TokenTokenSecurity")
-  top_buys                                TopBuys?
-  top_traders                             TopTrader[]
+  gmgnSignals   GmgnSignal[]    @relation("TokenGmgnSignals")
+  hot_tokens    HotToken[]
+  tokenMetrics  TokenMetrics[]
+  tokenSecurity TokenSecurity?  @relation("TokenTokenSecurity")
+  top_buys      TopBuys?
+  top_traders   TopTrader[]
+  TopBuysWallet TopBuysWallet[]
 
   @@unique([chain, token_address])
   @@index([chain])
@@ -150,6 +151,21 @@ model TopBuys {
   token                   Token    @relation(fields: [chain, token_address], references: [chain, token_address])
 
   @@unique([chain, token_address], name: "topBuysCompositeUnique")
+  @@index([chain])
+  @@index([token_address])
+}
+
+model TopBuysWallet {
+  id             Int       @id @default(autoincrement())
+  chain          String    @db.VarChar(255)
+  token_address  String    @db.VarChar(255)
+  wallet_address String    @db.VarChar(255)
+  wallet_tag     String?   @db.VarChar(255)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime? @updatedAt
+  token          Token     @relation(fields: [chain, token_address], references: [chain, token_address])
+
+  @@unique([chain, token_address, wallet_address], name: "topBuysWalletCompositeUnique")
   @@index([chain])
   @@index([token_address])
 }
@@ -267,13 +283,13 @@ model TopTrader {
 }
 
 model SmartWallet {
-  id                       Int              @id @default(autoincrement())
-  source                   String?          @db.VarChar(255)
-  wallet_address           String           @unique @db.VarChar(255)
-  chain                    String           @db.VarChar(255)
+  id                       Int      @id @default(autoincrement())
+  source                   String?  @db.VarChar(255)
+  wallet_address           String   @unique @db.VarChar(255)
+  chain                    String   @db.VarChar(255)
   realized_profit          Decimal?
-  buy                      Int              @default(0)
-  sell                     Int              @default(0)
+  buy                      Int      @default(0)
+  sell                     Int      @default(0)
   last_active              Decimal?
   realized_profit_1d       Decimal?
   realized_profit_7d       Decimal?
@@ -288,32 +304,32 @@ model SmartWallet {
   sol_balance              String?
   trx_balance              String?
   balance                  String?
-  twitter_username         String?          @db.VarChar(255)
+  twitter_username         String?  @db.VarChar(255)
   avatar                   String?
-  ens                      String?          @db.VarChar(255)
+  ens                      String?  @db.VarChar(255)
   tag_rank                 Json?
   tags                     String[]
-  maker_avatar_color       String?          @db.VarChar(255)
-  twitter_name             String?          @db.VarChar(255)
-  followers_count          Int              @default(0)
-  is_blue_verified         Boolean          @default(false)
+  maker_avatar_color       String?  @db.VarChar(255)
+  twitter_name             String?  @db.VarChar(255)
+  followers_count          Int      @default(0)
+  is_blue_verified         Boolean  @default(false)
   twitter_description      String?
   avg_hold_time            Decimal?
   winrate_7d               Decimal?
   avg_cost_7d              Decimal?
-  pnl_lt_minus_dot5_num_7d Int              @default(0)
-  pnl_minus_dot5_0x_num_7d Int              @default(0)
-  pnl_lt_2x_num_7d         Int              @default(0)
-  pnl_2x_5x_num_7d         Int              @default(0)
-  pnl_gt_5x_num_7d         Int              @default(0)
+  pnl_lt_minus_dot5_num_7d Int      @default(0)
+  pnl_minus_dot5_0x_num_7d Int      @default(0)
+  pnl_lt_2x_num_7d         Int      @default(0)
+  pnl_2x_5x_num_7d         Int      @default(0)
+  pnl_gt_5x_num_7d         Int      @default(0)
   daily_profit_7d          Json?
   recent_buy_tokens        Json?
-  txs                      Int              @default(0)
-  score                    Decimal?         @default(0)
+  txs                      Int      @default(0)
+  score                    Decimal? @default(0)
 
-  created_at               DateTime         @default(now())
-  updated_at               DateTime         @updatedAt
-  wallet_activities        WalletActivity[]
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  wallet_activities WalletActivity[]
 
   @@unique([chain, wallet_address], name: "smartWalletChainWalletAddressUnique")
   @@index([wallet_address])
@@ -355,42 +371,41 @@ model WalletActivity {
 }
 
 model GmgnSignal {
-  id                Int             @id @default(autoincrement())
-  timestamp         BigInt
-  source            String          @default("gmgn_web") @db.VarChar(255)
-  signal_id         Int?            @unique
-  maker             String?
-  token_address     String          @db.VarChar(255)
-  chain             String          @db.VarChar(255)
-  token_price       Decimal?
-  from_timestamp    BigInt?
-  updated_at        DateTime?        @updatedAt
-  buy_duration      Int?
-  buy_usd           Decimal?
-  tx_count          Int?
-  signal_type       String?         @db.VarChar(255)
-  smart_buy         Int?
-  smart_sell        Int?
-  signal_1h_count   Int?
-  score             Decimal?
+  id              Int       @id @default(autoincrement())
+  timestamp       BigInt
+  source          String    @default("gmgn_web") @db.VarChar(255)
+  signal_id       Int?      @unique
+  maker           String?
+  token_address   String    @db.VarChar(255)
+  chain           String    @db.VarChar(255)
+  token_price     Decimal?
+  from_timestamp  BigInt?
+  updated_at      DateTime? @updatedAt
+  buy_duration    Int?
+  buy_usd         Decimal?
+  tx_count        Int?
+  signal_type     String?   @db.VarChar(255)
+  smart_buy       Int?
+  smart_sell      Int?
+  signal_1h_count Int?
+  score           Decimal?
 
   first_entry_price Decimal?
   price_change      Float?
   link              Json?
   recent_buys       Json?
-  is_first          Boolean         @default(true)
-  created_at        DateTime        @default(now())
-  token_symbol      String?         @db.VarChar(255)
-  
-  ExecutedSignal    ExecutedSignal?
-  raw_data          Json?
-  token             Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
-  UserOrder         UserOrder[]
-  occurrence_count  Int?             @default(1)
-  last_occurrence   DateTime        @default(now())
+  is_first          Boolean  @default(true)
+  created_at        DateTime @default(now())
+  token_symbol      String?  @db.VarChar(255)
 
-  @@unique([source, chain, token_address, signal_type, timestamp], name: "gmgnSignalUnique")  // 修改此行
+  ExecutedSignal   ExecutedSignal?
+  raw_data         Json?
+  token            Token           @relation("TokenGmgnSignals", fields: [chain, token_address], references: [chain, token_address])
+  UserOrder        UserOrder[]
+  occurrence_count Int?            @default(1)
+  last_occurrence  DateTime        @default(now())
 
+  @@unique([source, chain, token_address, signal_type, timestamp], name: "gmgnSignalUnique") // 修改此行
   @@index([chain, token_address])
   @@index([source, chain, token_address])
   @@index([last_occurrence])
