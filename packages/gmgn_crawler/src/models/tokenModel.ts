@@ -12,7 +12,10 @@ async function parseAndSaveHotTokens(data: any[]) {
       ),
     );
     // Add this line to get the current timestamp in seconds
-    const currentTimestampInSeconds = Math.floor(now.getTime() / 1000);
+    const nowTime = new Date();
+    const utcTimestamp = Math.floor(
+      (nowTime.getTime() + nowTime.getTimezoneOffset() * 60000) / 1000,
+    );
 
     for (const token of data) {
       if (token.is_honeypot === 1 || token.is_show_alert) {
@@ -89,7 +92,7 @@ async function parseAndSaveHotTokens(data: any[]) {
           data: {
             chain: token.chain,
             token_address: token.address,
-            timestamp: BigInt(currentTimestampInSeconds),
+            timestamp: BigInt(utcTimestamp),
             price: token.price,
             market_cap: token.market_cap,
             liquidity: token.liquidity,
