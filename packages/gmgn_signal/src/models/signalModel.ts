@@ -62,6 +62,9 @@ export async function storeSignals(
           const currentTimestampInSeconds = Math.floor(
             new Date().getTime() / 1000,
           );
+          console.log(
+            `Signal ${signal.id} currentTimestampInSeconds: ${currentTimestampInSeconds}`,
+          );
 
           await tx.tokenMetrics.upsert({
             where: {
