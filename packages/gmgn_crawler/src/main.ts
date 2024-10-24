@@ -30,7 +30,7 @@ async function main() {
       datasetName: 'top_buyers',
     });
   }
-  requestQueue.addRequests(urls);
+  requestQueue.addRequests([...urls, ...crawlerGmgnUrlConfigs]);
 
   const crawler = gmgn({
     requestHandler: router,
