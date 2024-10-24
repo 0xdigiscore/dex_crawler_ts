@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b",
-    "start": "node dist/main.js",
-    "dev": "tsx src/main.ts"
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.20.0",
     "@dex_crawler/prisma": "^1.0.0",
+    "@prisma/client": "^5.20.0",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.1",
     "pg": "^8.13.0",
     "playwright": "*",
     "playwright-extra": "^4.3.6",

@@ -1,6 +1,6 @@
 import { upsertTopBuyers } from '@/models/topBuyersModel.js';
 import { generateWalletActivityUrl } from '@/utils/urlGenerate.js';
-import { CrawlingContext } from 'crawlee';
+import { CrawlingContext, EnqueueStrategy } from 'crawlee';
 import { Response } from 'playwright';
 import { URL } from 'url';
 
@@ -32,6 +32,11 @@ export async function topBuyers({
         await enqueueLinks({
           urls: newUrls,
           label: 'smart/wallet/activity',
+          // uniqueKey 决定是否入队
+          transformRequestFunction: (request) => {
+            request.uniqueKey = `${request.url}${new Date().valueOf()}`;
+            return request;
+          },
         });
       } catch (error) {
         log.error(`Error processing top traders: ${error}`);
