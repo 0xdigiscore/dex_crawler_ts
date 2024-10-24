@@ -169,15 +169,9 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
   const price = result.price;
   // Replace timestamp calculation with current UTC timestamp in seconds
 
-  const timestamp = Math.floor(
-    Date.UTC(
-      new Date().getUTCFullYear(),
-      new Date().getUTCMonth(),
-      new Date().getUTCDate(),
-      new Date().getUTCHours(),
-      new Date().getUTCMinutes(),
-      new Date().getUTCSeconds(),
-    ) / 1000,
+  const now = new Date();
+  const utcTimestamp = Math.floor(
+    (now.getTime() + now.getTimezoneOffset() * 60000) / 1000,
   );
 
   // Convert creationTime to UTC by subtracting 8 hours (28800 seconds) if it exists
@@ -188,7 +182,7 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
   const tokenMetrics: TokenMetrics = {
     chain: token.chain,
     token_address: token.token_address,
-    timestamp: BigInt(timestamp),
+    timestamp: BigInt(utcTimestamp),
     token_deploy_timestamp: BigInt(token_deploy_timestamp),
     price: price,
     liquidity: metrics.liquidity,

@@ -59,18 +59,11 @@ export async function storeSignals(
             },
           });
           const now = new Date();
-          const currentTimestampInSeconds = Math.floor(
-            Date.UTC(
-              new Date().getUTCFullYear(),
-              new Date().getUTCMonth(),
-              new Date().getUTCDate(),
-              new Date().getUTCHours(),
-              new Date().getUTCMinutes(),
-              new Date().getUTCSeconds(),
-            ) / 1000,
+          const utcTimestamp = Math.floor(
+            (now.getTime() + now.getTimezoneOffset() * 60000) / 1000,
           );
           console.log(
-            `Signal ${signal.id} currentTimestampInSeconds: ${currentTimestampInSeconds}`,
+            `Signal ${signal.id} currentTimestampInSeconds: ${utcTimestamp}`,
           );
 
           await tx.tokenMetrics.upsert({
@@ -78,14 +71,14 @@ export async function storeSignals(
               chain_token_address_timestamp: {
                 chain: signal.token?.chain,
                 token_address: signal.token.address,
-                timestamp: currentTimestampInSeconds,
+                timestamp: utcTimestamp,
               },
             },
             update: {}, // If it exists, don't update anything
             create: {
               chain: signal.token?.chain,
               token_address: signal.token.address,
-              timestamp: currentTimestampInSeconds,
+              timestamp: utcTimestamp,
               price: signal.token.price,
               market_cap: Number(signal.token.market_cap),
               liquidity: Number(signal.token.liquidity),
