@@ -58,9 +58,10 @@ export async function storeSignals(
               sell_tax: signal.token?.sell_tax,
             },
           });
-          const now = new Date(new Date().toUTCString());
-          // Add this line to get the current timestamp in seconds
-          const currentTimestampInSeconds = Math.floor(now.getTime() / 1000);
+          const now = new Date();
+          const currentTimestampInSeconds = Math.floor(
+            new Date().getTime() / 1000,
+          );
 
           await tx.tokenMetrics.upsert({
             where: {
