@@ -25,11 +25,6 @@ export const crawlerGmgnUrlConfigs: CrawlerUrlConfig[] = [
     label: 'rank/sol/wallets',
     datasetName: 'sol_smart_wallets_tokens',
   },
-  {
-    url: 'https://gmgn.ai/defi/quotation/v1/tokens/top_buyers/eth/0xa73b792906c79509d73fdfaaa78561e195010706',
-    label: 'top/buyers',
-    datasetName: 'top_buyers',
-  },
 ];
 
 export const getDatasetName = (url: string): string => {
