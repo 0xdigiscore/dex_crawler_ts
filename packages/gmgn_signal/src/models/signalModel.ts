@@ -60,7 +60,14 @@ export async function storeSignals(
           });
           const now = new Date();
           const currentTimestampInSeconds = Math.floor(
-            new Date().getTime() / 1000,
+            Date.UTC(
+              new Date().getUTCFullYear(),
+              new Date().getUTCMonth(),
+              new Date().getUTCDate(),
+              new Date().getUTCHours(),
+              new Date().getUTCMinutes(),
+              new Date().getUTCSeconds(),
+            ) / 1000,
           );
           console.log(
             `Signal ${signal.id} currentTimestampInSeconds: ${currentTimestampInSeconds}`,
@@ -92,7 +99,7 @@ export async function storeSignals(
             },
           });
 
-          // 定义时间窗口（15分钟前）
+          // ��义时间窗口（15分钟前）
           const fifteenMinutesAgo = BigInt(
             Math.floor(Date.now() / 1000) - 15 * 60,
           );
