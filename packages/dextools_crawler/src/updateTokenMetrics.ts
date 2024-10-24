@@ -167,13 +167,12 @@ function parseTokenMetrics(token: Token, result: DextoolsResult): TokenMetrics {
   const periodStats = result.periodStats || {};
 
   const price = result.price;
-  const timestamp = result.price_timestamp
-    ? Math.floor(new Date(result.price_timestamp).getTime() / 1000)
-    : Math.floor(Date.now() / 1000);
+  // Replace timestamp calculation with current UTC timestamp in seconds
+  const timestamp = Math.floor(Date.now() / 1000);
 
-  // Assign current timestamp if result.creationTime is null
+  // Convert creationTime to UTC by subtracting 8 hours (28800 seconds) if it exists
   const token_deploy_timestamp = result.creationTime
-    ? Math.floor(new Date(result.creationTime).getTime() / 1000)
+    ? Math.floor(new Date(result.creationTime).getTime() / 1000) - 28800
     : Math.floor(Date.now() / 1000);
 
   const tokenMetrics: TokenMetrics = {
