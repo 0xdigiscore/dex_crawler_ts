@@ -1,13 +1,17 @@
+// Indicates that you want to generate Prisma Client
 generator client {
   provider = "prisma-client-js"
   output   = "../../../node_modules/.prisma/client"
 }
 
+// Specifies your database connection
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Represent a table in relational databases or a collection in MongoDB
+// Provide the foundation for the queries in the Prisma Client API
 model Token {
   id                                      Int      @id @default(autoincrement())
   chain                                   String   @db.VarChar(255)

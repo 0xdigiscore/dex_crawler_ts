@@ -1,9 +1,15 @@
 import { upsertTopBuyers } from '@/models/topBuyersModel.js';
+import { generateWalletActivityUrl } from '@/utils/urlGenerate.js';
 import { CrawlingContext } from 'crawlee';
 import { Response } from 'playwright';
 import { URL } from 'url';
 
-export async function topBuyers({ request, log, response }: CrawlingContext) {
+export async function topBuyers({
+  request,
+  log,
+  response,
+  enqueueLinks,
+}: CrawlingContext) {
   log.info(`Processing Top Buyers: ${request.url}`);
   if (response && (response as Response).ok()) {
     const jsonResponse = await (response as Response).json();
@@ -15,6 +21,18 @@ export async function topBuyers({ request, log, response }: CrawlingContext) {
       const { chain } = extractTokenInfoFromRequest(request.url);
       try {
         await upsertTopBuyers(chain, data.holders.holderInfo);
+
+        const newUrls = [];
+        for (const holderInfo of data.holders.holderInfo) {
+          const walletAddress = holderInfo.wallet_address;
+          // 这里抓取代币的activity 数据
+          newUrls.push(generateWalletActivityUrl(walletAddress, chain));
+        }
+
+        await enqueueLinks({
+          urls: newUrls,
+          label: 'smart/wallet/activity',
+        });
       } catch (error) {
         log.error(`Error processing top traders: ${error}`);
       }
